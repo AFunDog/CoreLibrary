@@ -21,8 +21,6 @@ public class SettingValue : INotifyPropertyChanging,INotifyPropertyChanged
 
     protected readonly object _defValue;
     protected ISettingValueCommand? _command;
-    protected bool _isValueInited = false;
-    protected bool _isCommandInited = false;
 
     public event PropertyChangedEventHandler? PropertyChanged;
     public event PropertyChangingEventHandler? PropertyChanging;
@@ -58,18 +56,12 @@ public class SettingValue : INotifyPropertyChanging,INotifyPropertyChanged
     }
 
     /// <summary>
-    /// 初始化设置的值，只允许设置一次，之后都将无效
+    /// 初始化设置的值，使用此函数改变设置的值且不会触发事件和指令
     /// </summary>
     /// <param name="value"></param>
-    public virtual void InitValue(object? value = null)
+    internal virtual void InitValue(object? value = null)
     {
-        if (_isValueInited)
-            return;
-        if (value is not null)
-        {
-            Value = value;
-        }
-        _isValueInited = true;
+        _value = value ?? _defValue;
     }
 
     /// <summary>
