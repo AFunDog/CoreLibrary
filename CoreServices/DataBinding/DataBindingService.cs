@@ -36,6 +36,7 @@ namespace CoreServices.DataBinding
                 _bindings.Add(source, new() { [sourceProperty] = [targetInfo] });
                 source.PropertyChanged += OnSourcePropertyChanged;
             }
+            targetProperty.SetValue(target, sourceProperty.GetValue(source));
         }
 
         public void UnBind(INotifyPropertyChanged source, PropertyInfo sourceProperty, object target, PropertyInfo targetProperty)
