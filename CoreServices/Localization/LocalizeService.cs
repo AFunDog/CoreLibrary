@@ -15,6 +15,7 @@ namespace CoreServices.Localization
         private readonly Dictionary<CultureInfo, Dictionary<string, string>> _localizations = [];
         private readonly Dictionary<string, List<KeyValuePair<object, PropertyInfo>>> _bindActions = [];
         private Action? _localizeActions;
+
         private CultureInfo _locCulture;
         public CultureInfo LocCulture
         {

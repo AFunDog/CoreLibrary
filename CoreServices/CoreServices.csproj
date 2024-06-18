@@ -11,7 +11,7 @@
 		<Title>核心服务</Title>
 		<Authors>ZengKun</Authors>
 		<Description>一些核心工具服务</Description>
-		<VersionPrefix>1.0.2</VersionPrefix>
+		<VersionPrefix>1.0.3</VersionPrefix>
 	</PropertyGroup>
 
 	<ItemGroup>
