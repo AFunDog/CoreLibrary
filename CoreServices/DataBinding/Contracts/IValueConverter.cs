@@ -8,6 +8,6 @@ namespace CoreServices.DataBinding.Contracts
 {
     public interface IValueConverter
     {
-        object Convert(object sourceValue,Type targetType,object parameter);
+        object Convert(object sourceValue,Type targetType,object? parameter);
     }
 }

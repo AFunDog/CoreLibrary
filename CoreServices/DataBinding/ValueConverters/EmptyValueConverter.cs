@@ -7,13 +7,11 @@ using System.Threading.Tasks;
 
 namespace CoreServices.DataBinding.ValueConverters
 {
-    public class CommonValueConverter(Func<object, Type, object?, object> converter) : IValueConverter
+    public class EmptyValueConverter : IValueConverter
     {
-        private Func<object, Type, object?, object> _converter = converter;
-
         public object Convert(object sourceValue, Type targetType, object? parameter)
         {
-            return _converter(sourceValue, targetType, parameter);
+            return sourceValue;
         }
     }
 }

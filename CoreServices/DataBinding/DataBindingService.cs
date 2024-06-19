@@ -1,4 +1,7 @@
-﻿using CoreServices.Template;
+﻿using CoreServices.DataBinding.Contracts;
+using CoreServices.DataBinding.Structs;
+using CoreServices.DataBinding.ValueConverters;
+using CoreServices.Template;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -11,17 +14,20 @@ namespace CoreServices.DataBinding
 {
     public class DataBindingService : DisposableTemplate
     {
-        // source sourceProperty target targetProperty
-        private readonly Dictionary<INotifyPropertyChanged, Dictionary<PropertyInfo, List<(object Target, PropertyInfo TargetProperty)>>> _bindings = [];
+        // source sourceProperty bindingInfo
+        private readonly Dictionary<INotifyPropertyChanged, Dictionary<PropertyInfo, List<BindingInfo>>> _bindings = [];
 
-        public DataBindingService Bind(INotifyPropertyChanged source, PropertyInfo sourceProperty, object target, PropertyInfo targetProperty)
+        public DataBindingService Bind(INotifyPropertyChanged source, PropertyInfo sourceProperty, object target, PropertyInfo targetProperty, IValueConverter? valueConverter = null)
         {
-            var targetInfo = (target, targetProperty);
+            if (valueConverter is null)
+                valueConverter = new EmptyValueConverter();
+
+            BindingInfo targetInfo = new(target, targetProperty, valueConverter);
             if (_bindings.TryGetValue(source, out var values))
             {
                 if (values.TryGetValue(sourceProperty, out var list))
                 {
-                    if (!list.Contains(targetInfo))
+                    if (list.Find(s => s.Target == target && s.TargetProperty == targetProperty) is null)
                     {
                         list.Add(targetInfo);
                     }
@@ -36,7 +42,7 @@ namespace CoreServices.DataBinding
                 _bindings.Add(source, new() { [sourceProperty] = [targetInfo] });
                 source.PropertyChanged += OnSourcePropertyChanged;
             }
-            targetProperty.SetValue(target, sourceProperty.GetValue(source));
+            targetProperty.SetValue(target, valueConverter.Convert(sourceProperty.GetValue(source)!, target.GetType(), null));
             return this;
         }
 
@@ -46,9 +52,9 @@ namespace CoreServices.DataBinding
             {
                 if (values.TryGetValue(sourceProperty, out var list))
                 {
-                    if (list.Contains((target, targetProperty)))
+                    if (list.Find(s => s.Target == target && s.TargetProperty == targetProperty) is BindingInfo info)
                     {
-                        list.Remove((target, targetProperty));
+                        list.Remove(info);
                     }
                     if (list.Count == 0)
                     {
@@ -73,9 +79,9 @@ namespace CoreServices.DataBinding
             {
                 if (binds.TryGetValue(sender.GetType().GetProperty(e.PropertyName)!, out var list))
                 {
-                    foreach ((var target, var targetProperty) in list)
+                    foreach ((var target, var targetProperty, var valueConverter) in list)
                     {
-                        targetProperty.SetValue(target, sender.GetType().GetProperty(e.PropertyName)!.GetValue(sender));
+                        targetProperty.SetValue(target, valueConverter.Convert(sender.GetType().GetProperty(e.PropertyName)!.GetValue(sender)!, target.GetType(), null));
                     }
                 }
             }
