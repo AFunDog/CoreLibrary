@@ -14,7 +14,7 @@ namespace CoreServices.DataBinding
         // source sourceProperty target targetProperty
         private readonly Dictionary<INotifyPropertyChanged, Dictionary<PropertyInfo, List<(object Target, PropertyInfo TargetProperty)>>> _bindings = [];
 
-        public void Bind(INotifyPropertyChanged source, PropertyInfo sourceProperty, object target, PropertyInfo targetProperty)
+        public DataBindingService Bind(INotifyPropertyChanged source, PropertyInfo sourceProperty, object target, PropertyInfo targetProperty)
         {
             var targetInfo = (target, targetProperty);
             if (_bindings.TryGetValue(source, out var values))
@@ -37,9 +37,10 @@ namespace CoreServices.DataBinding
                 source.PropertyChanged += OnSourcePropertyChanged;
             }
             targetProperty.SetValue(target, sourceProperty.GetValue(source));
+            return this;
         }
 
-        public void UnBind(INotifyPropertyChanged source, PropertyInfo sourceProperty, object target, PropertyInfo targetProperty)
+        public DataBindingService UnBind(INotifyPropertyChanged source, PropertyInfo sourceProperty, object target, PropertyInfo targetProperty)
         {
             if (_bindings.TryGetValue(source, out var values))
             {
@@ -59,7 +60,7 @@ namespace CoreServices.DataBinding
                     _bindings.Remove(source);
                 }
             }
-
+            return this;
         }
 
         private void OnSourcePropertyChanged(object? sender, PropertyChangedEventArgs e)
