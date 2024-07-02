@@ -20,12 +20,12 @@ public class SettingValue : INotifyPropertyChanging,INotifyPropertyChanged
     protected object _value;
 
     protected readonly object _defValue;
-    protected ISettingValueCommand? _command;
+    protected ISettingValueCommand _command;
 
     public event PropertyChangedEventHandler? PropertyChanged;
     public event PropertyChangingEventHandler? PropertyChanging;
 
-    public ISettingValueCommand? Command => _command;
+    public ISettingValueCommand Command => _command;
     public object Value
     {
         get => _value;
@@ -80,25 +80,19 @@ public class SettingValue : INotifyPropertyChanging,INotifyPropertyChanged
     {
         return _value.Equals(_defValue);
     }
-    protected virtual bool CanModfiySettingValue(object sender, SettingValueChangeEvenArgs e)
+    protected virtual bool CanModfiySettingValue(SettingValue sender, SettingValueChangeEvenArgs e)
     {
-        if (_command is null)
-            return true;
         return _command.CanModifySettingValue(sender, e);
     }
-    protected virtual void OnSettingValueChanging(object sender, SettingValueChangeEvenArgs e)
+    protected virtual void OnSettingValueChanging(SettingValue sender, SettingValueChangeEvenArgs e)
     {
-        if (_command is null)
-            return;
         if (_command.CanExecuteChangingCommand(sender, e))
         {
             _command.ExecuteSettingValueChangingCommand(sender, e);
         }
     }
-    protected virtual void OnSettingValueChanged(object sender, SettingValueChangeEvenArgs e)
+    protected virtual void OnSettingValueChanged(SettingValue sender, SettingValueChangeEvenArgs e)
     {
-        if (_command is null)
-            return;
         if (_command.CanExecuteChangedCommand(sender, e))
         {
             _command.ExecuteSettingValueChangedCommand(sender, e);

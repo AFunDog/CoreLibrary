@@ -362,3 +362,13 @@ MigrationBackup/
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
 /CoreServicesTest
+/CoreServicesWinUITest/CoreServicesWinUITest.csproj
+/CoreServicesTest/LocalizeServiceTest.cs
+/CoreServicesTest/SettingServiceTest.cs
+/CoreServicesWinUITest/CoreServicesWinUITest.csproj
+/CoreServicesWinUITest/CoreServicesWinUITest.csproj
+/.gitignore
+/.gitignore
+/CoreServicesWinUITest
+/.gitignore
+/.gitignore

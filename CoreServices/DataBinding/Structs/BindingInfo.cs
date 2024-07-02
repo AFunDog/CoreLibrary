@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace CoreServices.DataBinding.Structs
 {
-    internal record BindingInfo(object Target, PropertyInfo TargetProperty, IValueConverter ValueConverter)
+    internal record BindingInfo(object Target, string TargetProperty, IValueConverter ValueConverter)
     {
     }
 }

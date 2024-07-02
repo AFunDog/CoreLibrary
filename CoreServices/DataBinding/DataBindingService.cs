@@ -1,8 +1,4 @@
-﻿using CoreServices.DataBinding.Contracts;
-using CoreServices.DataBinding.Structs;
-using CoreServices.DataBinding.ValueConverters;
-using CoreServices.Template;
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
@@ -11,50 +7,89 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using CoreServices.DataBinding.Contracts;
+using CoreServices.DataBinding.Structs;
+using CoreServices.DataBinding.ValueConverters;
+using CoreServices.Template;
 
 namespace CoreServices.DataBinding
 {
-    public class DataBindingService : DisposableTemplate
+    public class DataBindingService : DisposableTemplate, IDataBindingService
     {
         // source sourceProperty bindingInfo
-        private readonly Dictionary<INotifyPropertyChanged, Dictionary<PropertyInfo, List<BindingInfo>>> _bindings = [];
-        private readonly Dictionary<INotifyCollectionChanged, List<(Action<INotifyCollectionChanged, IList> itemsAdded, Action<INotifyCollectionChanged, IList> itemsRemoved)>> _bindCollections = [];
+        private readonly Dictionary<
+            INotifyPropertyChanged,
+            Dictionary<string, List<BindingInfo>>
+        > _bindings = [];
+        private readonly Dictionary<
+            INotifyCollectionChanged,
+            List<(
+                Action<INotifyCollectionChanged, IList> itemsAdded,
+                Action<INotifyCollectionChanged, IList> itemsRemoved
+            )>
+        > _bindCollections = [];
 
-        public DataBindingService Bind(INotifyPropertyChanged source, PropertyInfo sourceProperty, object target, PropertyInfo targetProperty, IValueConverter? valueConverter = null)
+        public DataBindingService Bind(
+            INotifyPropertyChanged source,
+            string sourceProperty,
+            object target,
+            string targetProperty,
+            IValueConverter? valueConverter = null
+        )
         {
             if (valueConverter is null)
                 valueConverter = new EmptyValueConverter();
 
-            BindingInfo targetInfo = new(target, targetProperty, valueConverter);
-            if (_bindings.TryGetValue(source, out var values))
+            if (source.GetType().GetProperty(sourceProperty) is PropertyInfo sourcePropertyInfo && target.GetType().GetProperty(targetProperty) is PropertyInfo targetPropertyInfo)
             {
-                if (values.TryGetValue(sourceProperty, out var list))
+                BindingInfo targetInfo = new(target, targetProperty, valueConverter);
+                if (_bindings.TryGetValue(source, out var values))
                 {
-                    if (list.Find(s => s.Target == target && s.TargetProperty == targetProperty) is null)
+                    if (values.TryGetValue(sourceProperty, out var list))
                     {
-                        list.Add(targetInfo);
+                        if (
+                            list.Find(s => s.Target == target && s.TargetProperty == targetProperty)
+                            is null
+                        )
+                        {
+                            list.Add(targetInfo);
+                        }
+                    }
+                    else
+                    {
+                        values.Add(sourceProperty, [targetInfo]);
                     }
                 }
                 else
                 {
-                    values.Add(sourceProperty, [targetInfo]);
+                    _bindings.Add(source, new() { [sourceProperty] = [targetInfo] });
+                    source.PropertyChanged += OnSourcePropertyChanged;
                 }
+                targetPropertyInfo.SetValue(
+                    target,
+                    valueConverter.Convert(sourcePropertyInfo.GetValue(source)!, target.GetType(), null)
+                );
             }
-            else
-            {
-                _bindings.Add(source, new() { [sourceProperty] = [targetInfo] });
-                source.PropertyChanged += OnSourcePropertyChanged;
-            }
-            targetProperty.SetValue(target, valueConverter.Convert(sourceProperty.GetValue(source)!, target.GetType(), null));
+
+
             return this;
         }
-        public DataBindingService UnBind(INotifyPropertyChanged source, PropertyInfo sourceProperty, object target, PropertyInfo targetProperty)
+
+        public DataBindingService UnBind(
+            INotifyPropertyChanged source,
+            string sourceProperty,
+            object target,
+            string targetProperty
+        )
         {
             if (_bindings.TryGetValue(source, out var values))
             {
                 if (values.TryGetValue(sourceProperty, out var list))
                 {
-                    if (list.Find(s => s.Target == target && s.TargetProperty == targetProperty) is BindingInfo info)
+                    if (
+                        list.Find(s => s.Target == target && s.TargetProperty == targetProperty)
+                        is BindingInfo info
+                    )
                     {
                         list.Remove(info);
                     }
@@ -70,10 +105,12 @@ namespace CoreServices.DataBinding
             }
             return this;
         }
+
         public DataBindingService BindCollection(
             INotifyCollectionChanged collection,
             Action<INotifyCollectionChanged, IList> itemsAdded,
-            Action<INotifyCollectionChanged, IList> itemsRemoved)
+            Action<INotifyCollectionChanged, IList> itemsRemoved
+        )
         {
             var actions = (itemsAdded, itemsRemoved);
             if (_bindCollections.TryGetValue(collection, out var list))
@@ -87,8 +124,8 @@ namespace CoreServices.DataBinding
             }
             return this;
         }
-        public DataBindingService UnBindCollection(
-            INotifyCollectionChanged collection)
+
+        public DataBindingService UnBindCollection(INotifyCollectionChanged collection)
         {
             if (_bindCollections.TryGetValue(collection, out var list))
             {
@@ -97,14 +134,19 @@ namespace CoreServices.DataBinding
             }
             return this;
         }
+
         public DataBindingService UnBindCollection(
             INotifyCollectionChanged collection,
             Action<INotifyCollectionChanged, IList> itemsAdded,
-            Action<INotifyCollectionChanged, IList> itemsRemoved)
+            Action<INotifyCollectionChanged, IList> itemsRemoved
+        )
         {
             if (_bindCollections.TryGetValue(collection, out var list))
             {
-                if (list.Find(s => s.itemsAdded == itemsAdded && s.itemsRemoved == itemsRemoved) is var actions)
+                if (
+                    list.Find(s => s.itemsAdded == itemsAdded && s.itemsRemoved == itemsRemoved)
+                    is var actions
+                )
                 {
                     list.Remove(actions);
                     if (list.Count == 0)
@@ -119,17 +161,27 @@ namespace CoreServices.DataBinding
 
         private void OnSourcePropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
-            if (e.PropertyName is null || sender is null || sender.GetType().GetProperty(e.PropertyName) is null)
+            if (
+                e.PropertyName is null
+                || sender is null
+                || sender.GetType().GetProperty(e.PropertyName) is null
+            )
                 return;
-
 
             if (_bindings.TryGetValue((sender as INotifyPropertyChanged)!, out var binds))
             {
-                if (binds.TryGetValue(sender.GetType().GetProperty(e.PropertyName)!, out var list))
+                if (binds.TryGetValue(e.PropertyName, out var list))
                 {
                     foreach ((var target, var targetProperty, var valueConverter) in list)
                     {
-                        targetProperty.SetValue(target, valueConverter.Convert(sender.GetType().GetProperty(e.PropertyName)!.GetValue(sender)!, target.GetType(), null));
+                        target.GetType().GetProperty(targetProperty)!.SetValue(
+                            target,
+                            valueConverter.Convert(
+                                sender.GetType().GetProperty(e.PropertyName)!.GetValue(sender)!,
+                                target.GetType(),
+                                null
+                            )
+                        );
                     }
                 }
             }
@@ -145,7 +197,7 @@ namespace CoreServices.DataBinding
                 case NotifyCollectionChangedAction.Add:
                     if (e.NewItems is null)
                         break;
-                    foreach(var action in _bindCollections[(sender as INotifyCollectionChanged)!])
+                    foreach (var action in _bindCollections[(sender as INotifyCollectionChanged)!])
                     {
                         action.itemsAdded((sender as INotifyCollectionChanged)!, e.NewItems);
                     }
@@ -165,16 +217,12 @@ namespace CoreServices.DataBinding
             }
         }
 
-
         protected override void DestoryManagedResource()
         {
             _bindings.Clear();
             _bindCollections.Clear();
         }
 
-        protected override void DestoryUnmanagedResource()
-        {
-
-        }
+        protected override void DestoryUnmanagedResource() { }
     }
 }

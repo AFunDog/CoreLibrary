@@ -10,38 +10,31 @@ using System.Threading.Tasks;
 
 namespace CoreServices.Localization
 {
-    public sealed class LocalizeService : DisposableTemplate
+    public sealed class LocalizeService : DisposableTemplate, ILocalizeService
     {
         private readonly Dictionary<CultureInfo, Dictionary<string, string>> _localizations = [];
-        private readonly Dictionary<string, List<KeyValuePair<object, PropertyInfo>>> _bindActions = [];
         private Action? _localizeActions;
 
-        private CultureInfo _locCulture;
-        public CultureInfo LocCulture
+        private CultureInfo _currentCulture = CultureInfo.CurrentCulture;
+        public CultureInfo CurrentCultrue
         {
-            get => _locCulture;
+            get => _currentCulture;
             set
             {
-                if (_locCulture != value)
+                if (_currentCulture != value)
                 {
-                    _locCulture = value;
-                    ExecuteBindActions();
-                    ExecuteLocalizeActions();
-                    LocCultureChanged?.Invoke(_locCulture);
+                    _currentCulture = value;
+                    CurrentCultureChanged?.Invoke(this, _currentCulture);
                 }
             }
         }
-        public event Action<CultureInfo>? LocCultureChanged;
+        public event Action<ILocalizeService, CultureInfo>? CurrentCultureChanged;
 
-        public LocalizeService(CultureInfo? culture = null)
-        {
-            _locCulture = culture ?? CultureInfo.CurrentCulture;
-        }
         public string Localize(string uid)
         {
-            return Localize(LocCulture, uid);
+            return Localize(uid, CurrentCultrue);
         }
-        public string Localize(CultureInfo culture, string uid)
+        public string Localize(string uid, CultureInfo culture)
         {
             if (_localizations.TryGetValue(culture, out var loc))
             {
@@ -52,7 +45,7 @@ namespace CoreServices.Localization
             }
             return uid;
         }
-        public void SetLoc(CultureInfo culture, string uid, string value)
+        public void SetLocalization(CultureInfo culture, string uid, string value)
         {
             if (_localizations.TryGetValue(culture, out var loc))
             {
@@ -66,53 +59,10 @@ namespace CoreServices.Localization
                 };
             }
         }
-        public void BindLocalize(object target, PropertyInfo property, string uid)
-        {
-            if (_bindActions.TryGetValue(uid, out var binds))
-            {
-                binds.Add(new(target, property));
-            }
-            else
-            {
-                _bindActions[uid] = [new(target, property)];
-            }
-            property.SetValue(target, Localize(LocCulture, uid));
-        }
-        public void SetLocalizeAction(Action action)
-        {
-            if (_localizeActions is null)
-            {
-                _localizeActions = action;
-            }
-            else
-            {
-                _localizeActions += action;
-            }
-        }
-
-        private void ExecuteBindActions()
-        {
-            foreach ((var uid, var binds) in _bindActions)
-            {
-                foreach ((var target, var property) in binds)
-                {
-                    property.SetValue(target, Localize(LocCulture, uid));
-                }
-            }
-
-
-        }
-        private void ExecuteLocalizeActions()
-        {
-            _localizeActions?.Invoke();
-        }
-
-
 
         protected override void DestoryManagedResource()
         {
             _localizations.Clear();
-            _bindActions.Clear();
             _localizeActions = null;
         }
 
