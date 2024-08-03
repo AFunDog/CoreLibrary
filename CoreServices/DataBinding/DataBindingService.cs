@@ -14,13 +14,10 @@ using CoreServices.Template;
 
 namespace CoreServices.DataBinding
 {
-    public class DataBindingService : DisposableTemplate, IDataBindingService
+    public sealed class DataBindingService : DisposableTemplate, IDataBindingService
     {
         // source sourceProperty bindingInfo
-        private readonly Dictionary<
-            INotifyPropertyChanged,
-            Dictionary<string, List<BindingInfo>>
-        > _bindings = [];
+        private readonly Dictionary<INotifyPropertyChanged, Dictionary<string, List<BindingInfo>>> _bindings = [];
         private readonly Dictionary<
             INotifyCollectionChanged,
             List<(
@@ -40,17 +37,17 @@ namespace CoreServices.DataBinding
             if (valueConverter is null)
                 valueConverter = new EmptyValueConverter();
 
-            if (source.GetType().GetProperty(sourceProperty) is PropertyInfo sourcePropertyInfo && target.GetType().GetProperty(targetProperty) is PropertyInfo targetPropertyInfo)
+            if (
+                source.GetType().GetProperty(sourceProperty) is PropertyInfo sourcePropertyInfo
+                && target.GetType().GetProperty(targetProperty) is PropertyInfo targetPropertyInfo
+            )
             {
                 BindingInfo targetInfo = new(target, targetProperty, valueConverter);
                 if (_bindings.TryGetValue(source, out var values))
                 {
                     if (values.TryGetValue(sourceProperty, out var list))
                     {
-                        if (
-                            list.Find(s => s.Target == target && s.TargetProperty == targetProperty)
-                            is null
-                        )
+                        if (list.Find(s => s.Target == target && s.TargetProperty == targetProperty) is null)
                         {
                             list.Add(targetInfo);
                         }
@@ -71,7 +68,6 @@ namespace CoreServices.DataBinding
                 );
             }
 
-
             return this;
         }
 
@@ -86,10 +82,7 @@ namespace CoreServices.DataBinding
             {
                 if (values.TryGetValue(sourceProperty, out var list))
                 {
-                    if (
-                        list.Find(s => s.Target == target && s.TargetProperty == targetProperty)
-                        is BindingInfo info
-                    )
+                    if (list.Find(s => s.Target == target && s.TargetProperty == targetProperty) is BindingInfo info)
                     {
                         list.Remove(info);
                     }
@@ -143,10 +136,7 @@ namespace CoreServices.DataBinding
         {
             if (_bindCollections.TryGetValue(collection, out var list))
             {
-                if (
-                    list.Find(s => s.itemsAdded == itemsAdded && s.itemsRemoved == itemsRemoved)
-                    is var actions
-                )
+                if (list.Find(s => s.itemsAdded == itemsAdded && s.itemsRemoved == itemsRemoved) is var actions)
                 {
                     list.Remove(actions);
                     if (list.Count == 0)
@@ -161,11 +151,7 @@ namespace CoreServices.DataBinding
 
         private void OnSourcePropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
-            if (
-                e.PropertyName is null
-                || sender is null
-                || sender.GetType().GetProperty(e.PropertyName) is null
-            )
+            if (e.PropertyName is null || sender is null || sender.GetType().GetProperty(e.PropertyName) is null)
                 return;
 
             if (_bindings.TryGetValue((sender as INotifyPropertyChanged)!, out var binds))
@@ -174,14 +160,17 @@ namespace CoreServices.DataBinding
                 {
                     foreach ((var target, var targetProperty, var valueConverter) in list)
                     {
-                        target.GetType().GetProperty(targetProperty)!.SetValue(
-                            target,
-                            valueConverter.Convert(
-                                sender.GetType().GetProperty(e.PropertyName)!.GetValue(sender)!,
-                                target.GetType(),
-                                null
-                            )
-                        );
+                        target
+                            .GetType()
+                            .GetProperty(targetProperty)!
+                            .SetValue(
+                                target,
+                                valueConverter.Convert(
+                                    sender.GetType().GetProperty(e.PropertyName)!.GetValue(sender)!,
+                                    target.GetType(),
+                                    null
+                                )
+                            );
                     }
                 }
             }

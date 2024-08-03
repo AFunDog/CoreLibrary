@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<UserControl
+    x:Class="CoreServices.WinUI.Controls.CustomNavigationView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="using:CoreServices.WinUI.Controls"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:selectors="using:CoreServices.WinUI.TemplateSelectors"
+    mc:Ignorable="d">
+
+    <NavigationView
+        x:Name="baseNavigationView"
+        BackRequested="OnBackRequested"
+        IsSettingsVisible="False"
+        ItemInvoked="OnItemInvoked">
+        <NavigationView.MenuItemTemplateSelector>
+            <selectors:CustomNavigationViewItemTemplateSelector />
+        </NavigationView.MenuItemTemplateSelector>
+        <ScrollViewer
+            HorizontalScrollBarVisibility="Disabled"
+            HorizontalScrollMode="Disabled"
+            VerticalScrollBarVisibility="Auto"
+            VerticalScrollMode="Auto"
+            ZoomMode="Disabled">
+            <Frame x:Name="contentFrame" Navigated="OnNavigated" />
+        </ScrollViewer>
+    </NavigationView>
+</UserControl>

@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "CoreServicesWinUILibrary (Package)": {
+      "commandName": "MsixPackage"
+    },
+    "CoreServicesWinUILibrary (Unpackaged)": {
+      "commandName": "Project"
+    }
+  }
+}

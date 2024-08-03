@@ -9,7 +9,7 @@ using MessagePack.Formatters;
 namespace CoreServices.Setting.Structs;
 
 [MessagePackObject]
-public readonly record struct SettingData(
+public readonly record struct SettingRecord(
     [property: Key(0)] string Key,
-    [property: Key(1), MessagePackFormatter(typeof(TypelessFormatter))] object Value);
-
+    [property: Key(1), MessagePackFormatter(typeof(TypelessFormatter))] object Value
+);

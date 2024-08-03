@@ -1,13 +1,13 @@
-﻿using CoreServices.DataBinding.Contracts;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using CoreServices.DataBinding.Contracts;
 
 namespace CoreServices.DataBinding.ValueConverters
 {
-    public class CommonValueConverter(Func<object, Type, object?, object> converter) : IValueConverter
+    public sealed class CommonValueConverter(Func<object, Type, object?, object> converter) : IValueConverter
     {
         private Func<object, Type, object?, object> _converter = converter;
 

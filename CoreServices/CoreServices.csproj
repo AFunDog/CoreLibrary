@@ -7,15 +7,28 @@
 		<TargetFramework>net8.0</TargetFramework>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
-		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+		<GeneratePackageOnBuild>False</GeneratePackageOnBuild>
 		<Title>核心服务</Title>
 		<Authors>ZengKun</Authors>
 		<Description>一些核心工具服务</Description>
-		<VersionPrefix>1.0.52</VersionPrefix>
+		<VersionPrefix>1.0.53</VersionPrefix>
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="MessagePack" Version="2.5.140" />
+		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.2" />
+		<PackageReference Include="MessagePack" Version="2.5.172" />
+		<PackageReference Include="MessagePack.Annotations" Version="2.5.172" />
+		<PackageReference Include="MessagePackAnalyzer" Version="2.5.172">
+		  <PrivateAssets>all</PrivateAssets>
+		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+		<PackageReference Include="Microsoft.VisualStudio.Threading" Version="17.10.48" />
+		<PackageReference Include="Microsoft.VisualStudio.Threading.Analyzers" Version="17.10.48">
+		  <PrivateAssets>all</PrivateAssets>
+		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+		<PackageReference Include="Serilog" Version="4.0.1" />
+		<PackageReference Include="Serilog.Sinks.Debug" Version="3.0.0" />
 		<None Include="README.md" Pack="true" PackagePath="\" />
 	</ItemGroup>
 

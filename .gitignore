@@ -372,3 +372,7 @@ FodyWeavers.xsd
 /CoreServicesWinUITest
 /.gitignore
 /.gitignore
+/AvaloniaApplicationTest/AvaloniaApplicationTest.csproj
+/AvaloniaApplicationTest
+/CoreServices.WinUI/CoreServices.WinUI.nuspec
+/.csharpierrc

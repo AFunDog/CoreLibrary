@@ -1,14 +1,12 @@
-﻿using CoreServices.DataBinding.Contracts;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using CoreServices.DataBinding.Contracts;
 
 namespace CoreServices.DataBinding.Structs
 {
-    internal record BindingInfo(object Target, string TargetProperty, IValueConverter ValueConverter)
-    {
-    }
+    internal sealed record BindingInfo(object Target, string TargetProperty, IValueConverter ValueConverter) { }
 }

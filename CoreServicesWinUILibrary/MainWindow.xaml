@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Window
+    x:Class="CoreServicesWinUILibrary.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:c="using:CoreServices.WinUI.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="using:CoreServicesWinUILibrary"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+    <Window.SystemBackdrop>
+        <DesktopAcrylicBackdrop />
+    </Window.SystemBackdrop>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="48" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <c:CustomTitleBar
+            Title="WinUI控件库展示"
+            Grid.Row="0"
+            SubTitle=""
+            TargetWindow="{x:Bind}" />
+        <c:CustomNavigationView
+            x:Name="WindowNavigationView"
+            Grid.Row="1"
+            FooterPageItems="{x:Bind FooterPageItems}"
+            HeaderPageItems="{x:Bind HeaderPageItems}"
+            OpenPaneLength="196" />
+    </Grid>
+</Window>

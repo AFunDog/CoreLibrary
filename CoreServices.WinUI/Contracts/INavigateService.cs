@@ -7,10 +7,9 @@ using System.Threading.Tasks;
 
 namespace CoreServices.WinUI.Contracts
 {
-    public interface INavigationService
+    public interface INavigateService
     {
-        void Register(NavigationView navigationView,Frame frame);
-
-        void Navigate(Type pageType, object? args = null);
+        void AttachService(Frame frame);
+        void Navigate(Type pageType,object? args = null);
     }
 }

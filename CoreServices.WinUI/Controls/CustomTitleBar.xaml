@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<UserControl
+    x:Class="CoreServices.WinUI.Controls.CustomTitleBar"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="using:CoreServices.WinUI.Controls"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+    <RelativePanel
+        x:Name="windowTitleBar"
+        Grid.Row="0"
+        Background="{ThemeResource AcrylicBackgroundFillColorDefaultBrush}">
+        <TextBlock
+            x:Name="titleTextBlock"
+            Margin="16,8,8,0"
+            RelativePanel.AlignLeftWithPanel="True"
+            Style="{ThemeResource SubtitleTextBlockStyle}" />
+        <TextBlock
+            x:Name="subTitleTextBlock"
+            VerticalAlignment="Center"
+            RelativePanel.AlignVerticalCenterWithPanel="True"
+            RelativePanel.RightOf="titleTextBlock"
+            Style="{ThemeResource BaseTextBlockStyle}"
+            TextAlignment="Center" />
+    </RelativePanel>
+</UserControl>

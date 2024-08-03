@@ -1,18 +1,23 @@
 # CoreService
 
 ## 🔄️数据绑定服务
+
+可以将一个`INotifyPropertyChanged`对象的某个属性绑定到另一对象的相同类型的属性
+
+如果绑定到不同类型的属性上需要设置自定义的`IValueConverter`
+
 ```C#
 using DataBindingService service = new();
 ViewModel viewModel = new();
 View view = new();
 service.Bind(
-    viewModel, typeof(ViewModel).GetProperty(nameof(ViewModel.Name))!,
-    view, typeof(View).GetProperty(nameof(View.Name))!);
+    viewModel, nameof(ViewModel.Name),
+    view, nameof(View.Name));
 viewModel.Name = "123";
 viewModel.Name = "345";
 service.UnBind(
-    viewModel, typeof(ViewModel).GetProperty(nameof(ViewModel.Name))!,
-    view, typeof(View).GetProperty(nameof(View.Name))!);
+    viewModel, nameof(ViewModel.Name),
+    view, nameof(View.Name));
 viewModel.Name = "123";
 ```
 ## ⚙️设置服务
@@ -25,27 +30,25 @@ viewModel.Name = "123";
 // 创建设置服务
 SettingService settingService = new();
 // 初始化设置服务
-settingService.Init(
-    // 使用回调函数进行初始化配置
-    (builder) =>
-    {
-        // 添加一个主题设置
-        builder.AddSetting("Theme", new SettingValueEnum(
-            0,                              // 默认选择
-            [
-                new("System",0),            // 设置选项的名称和携带数据
-                new("Dark",1),
-                new("Light",2)
-                ],
-            // 设置值更改命令
-            new SettingValueCommand(
-                // 值更改时触发
-                (s, e) => { Console.WriteLine($"ValueChanging{e.OldValue}"); },
-                // 值更改后触发
-                (s, e) => { Console.WriteLine($"ValueChanged{e.NewValue}"); }
-                )
-            ));
-    });
+settingService.BuildSettings(builder =>
+            {
+                builder
+                    // 配置设置
+                    .ConfigureSetting(
+                        new(
+                            "Number",				// 设置键
+                            new SettingValue(		// 设置的值
+                                100,
+                                new SettingValueCommand(		// 注入设置命令
+                                    (_, e) =>
+                                    {
+                                        Number = (int)e.NewValue;
+                                    }
+                                )
+                            )
+                        )
+                    );
+            }
 ```
 
 这个示例创建了一个设置服务，并用`Init`对其进行初始化。
@@ -56,9 +59,12 @@ settingService.Init(
 
 ```C#
 using LocalizeService service = new();
-service.SetLoc(new("zh-cn"), "NameUid", "名称");
-service.SetLoc(new("en-us"), "NameUid", "Name");
-View view = new View();
-service.BindLocalize(view, typeof(View).GetProperty(nameof(View.Name))!, "NameUid");
-service.LocCulture = new("en-us");
+service.SetLocalization(new CultureInfo("zh-cn"), "SubTitleUid", "副标题");
+service.SetLocalization(new CultureInfo("en-us"), "SubTitleUid", "SubTitle");
+SubTitle = service.Localize("SubTitleUid");
+service.CurrentCultureChanged += (s,c) =>
+{
+    SubTitle = s.Localize("SubTitleUid");
+};
+service.CurrentCultrue = new("en-us");
 ```

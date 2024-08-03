@@ -1,7 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using System.IO;
 using System.Linq;
+using System.Net.WebSockets;
 using System.Text;
 using System.Threading.Tasks;
 using CoreServices.Setting.Structs;
@@ -10,24 +14,28 @@ using MessagePack;
 
 namespace CoreServices.Setting;
 
-/// <summary>
-/// 设置服务
-/// </summary>
 public sealed class SettingService : DisposableTemplate, ISettingService
 {
-    private readonly Dictionary<string, SettingValue> _settings = [];
+    private const string DefaultGroup = "Default";
 
-    public IDictionary<string, SettingValue> Settings => _settings.AsReadOnly();
+    private readonly Dictionary<string, SettingConfiguration> _settings = [];
+    private readonly Dictionary<string, Dictionary<string, List<string>>> _groupInfos = new() { [DefaultGroup] = [] };
 
-    /// <summary>
-    /// 设置服务组装器
-    /// <para>
-    /// 用于配置初始默认设置
-    /// </para>
-    /// </summary>
-    public sealed class SettingServiceBuilder
-        : DisposableTemplate,
-            ISettingService.ISettingServiceBuilder
+    public IReadOnlyDictionary<string, SettingConfiguration> Settings => _settings.AsReadOnly();
+
+    public IReadOnlyDictionary<string, IReadOnlyDictionary<string, IReadOnlyCollection<string>>> GroupInfos =>
+        _groupInfos
+            .Select(kv => new KeyValuePair<string, IReadOnlyDictionary<string, IReadOnlyCollection<string>>>(
+                kv.Key,
+                kv.Value.Select(kv2 => new KeyValuePair<string, IReadOnlyCollection<string>>(
+                        kv2.Key,
+                        kv2.Value.AsReadOnly()
+                    ))
+                    .ToDictionary()
+            ))
+            .ToDictionary();
+
+    public sealed class SettingServiceBuilder : DisposableTemplate, ISettingService.ISettingServiceBuilder
     {
         private readonly SettingService _service;
 
@@ -36,18 +44,34 @@ public sealed class SettingService : DisposableTemplate, ISettingService
             _service = service;
         }
 
-        /// <summary>
-        /// 添加初始默认设置
-        /// </summary>
-        /// <param name="key">设置键</param>
-        /// <param name="settingValue">设置值</param>
-        /// <returns></returns>
-        public ISettingService.ISettingServiceBuilder Configure(
-            string key,
-            SettingValue settingValue
+        public ISettingService.ISettingServiceBuilder ConfigureGroup(string groupKey)
+        {
+            _service._groupInfos.TryAdd(groupKey, []);
+            return this;
+        }
+
+        public ISettingService.ISettingServiceBuilder ConfigureSetting(
+            SettingConfiguration settingConfiguration,
+            string? groupKey = null,
+            string? ownerKey = null
         )
         {
-            _service._settings.TryAdd(key, settingValue);
+            _service._settings.TryAdd(settingConfiguration.OnlyKey, settingConfiguration);
+            if (string.IsNullOrEmpty(groupKey) || !_service._groupInfos.ContainsKey(groupKey))
+            {
+                groupKey = DefaultGroup;
+            }
+            if (_service._groupInfos.TryGetValue(groupKey, out var members))
+            {
+                if (!string.IsNullOrEmpty(ownerKey) && members.TryGetValue(ownerKey, out var kids))
+                {
+                    kids.Add(settingConfiguration.OnlyKey);
+                }
+                else
+                {
+                    members.TryAdd(settingConfiguration.OnlyKey, []);
+                }
+            }
             return this;
         }
 
@@ -56,83 +80,124 @@ public sealed class SettingService : DisposableTemplate, ISettingService
         protected override void DestoryUnmanagedResource() { }
     }
 
-    /// <summary>
-    /// 初始化设置服务
-    /// </summary>
-    /// <param name="builder">设置服务组装器</param>
     public void BuildSettings(Action<ISettingService.ISettingServiceBuilder> builder)
     {
         builder(new SettingServiceBuilder(this));
     }
 
-    /// <summary>
-    /// 获取设置
-    /// </summary>
-    /// <param name="key">设置键</param>
-    /// <param name="settingValue">设置值</param>
-    /// <returns>若有匹配的设置键则返回 <see href="true"/> ，反之返回 <see href="false"/></returns>
-    public SettingValue? GetSetting(string key) =>
-        _settings.TryGetValue(key, out var settingValue) ? settingValue : null;
-    public object GetSettingValue(string key,object defaultValue) =>
-        _settings.TryGetValue(key, out var settingValue) ? settingValue.Value : defaultValue;
-    public void SetSettingValue(string key ,object value)
+    public void SetSettingValue(string key, object value)
     {
-        if(_settings.TryGetValue(key, out var settingValue) && settingValue.Value.GetType() == value.GetType())
+        if (_settings.TryGetValue(key, out var settingConfiguration))
         {
-            settingValue.Value = value;
+            settingConfiguration.SettingValue.Value = value;
+            settingConfiguration.SettingValue.ApplyChange();
         }
     }
 
-    /// <summary>
-    /// 保存设置到指定文件
-    /// </summary>
-    /// <param name="path">文件路径</param>
-    /// <returns></returns>
-    public void SaveSettings(string path)
+    public object? GetSettingValue(string key)
     {
-        if (!File.Exists(path))
-            File.Create(path).Close();
-
-        SettingData[] settingDatas =
-        [
-            .. from ss in _settings
-            select new SettingData() { Key = ss.Key, Value = ss.Value.Value }
-        ];
-
-        File.WriteAllBytes(path, MessagePackSerializer.Serialize(settingDatas));
+        if (_settings.TryGetValue(key, out var settingConfiguration))
+        {
+            return settingConfiguration.SettingValue.Value;
+        }
+        return null;
     }
 
-    /// <summary>
-    /// 从指定文件读入设置
-    /// </summary>
-    /// <param name="path">文件路径</param>
-    /// <returns></returns>
-    public void ReadSettings(string path)
+    public void SaveSettings(string filePath)
     {
-        if (!File.Exists(path))
-            return;
-        foreach (
-            var settingData in MessagePackSerializer.Deserialize<SettingData[]>(
-                File.ReadAllBytes(path)
-            )
-        )
+        if (!Directory.Exists(Path.GetDirectoryName(filePath)))
+            Directory.CreateDirectory(Path.GetDirectoryName(filePath)!);
+        if (!File.Exists(filePath))
+            File.Create(filePath).Close();
+
+        var settingDatas = _settings.Select(kv =>
         {
-            if (_settings.TryGetValue(settingData.Key, out var settingValue))
+            return new SettingRecord(kv.Key, kv.Value.SettingValue.InternalValue);
+        });
+
+        File.WriteAllBytes(filePath, MessagePackSerializer.Serialize(settingDatas));
+    }
+
+    public async Task SaveSettingsAsync(string filePath, CancellationToken cancellationToken = default)
+    {
+        if (!Directory.Exists(Path.GetDirectoryName(filePath)))
+            Directory.CreateDirectory(Path.GetDirectoryName(filePath)!);
+        using FileStream fileStream = new(filePath, FileMode.OpenOrCreate);
+        var settingDatas = _settings.Select(kv =>
+        {
+            return new SettingRecord(kv.Key, kv.Value.SettingValue.InternalValue);
+        });
+        await MessagePackSerializer.SerializeAsync(fileStream, settingDatas, cancellationToken: cancellationToken);
+    }
+
+    public void ReadSettings(string dirPath)
+    {
+        if (!Directory.Exists(dirPath))
+            return;
+        foreach (var file in Directory.GetFiles(dirPath))
+        {
+            try
             {
-                settingValue.InitValue(settingData.Value);
+                foreach (
+                    var settingData in MessagePackSerializer.Deserialize<IEnumerable<SettingRecord>>(
+                        File.ReadAllBytes(file)
+                    )
+                )
+                {
+                    if (_settings.TryGetValue(settingData.Key, out var settingConfiguration))
+                    {
+                        settingConfiguration.SettingValue.InitValue(settingData.Value);
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine(e);
             }
         }
     }
-    public void TryExecuteAllCommands()
+
+    public async Task ReadSettingsAsync(string dirPath, CancellationToken cancellationToken = default)
     {
-        foreach((_,var setting) in _settings)
+        if (!Directory.Exists(dirPath))
+            return;
+        foreach (var file in Directory.GetFiles(dirPath))
         {
-            setting.Value = setting.Value;
+            try
+            {
+                using FileStream fileStream = new(file, FileMode.Open);
+                foreach (
+                    var settingData in await MessagePackSerializer.DeserializeAsync<IEnumerable<SettingRecord>>(
+                        fileStream,
+                        cancellationToken: cancellationToken
+                    )
+                )
+                {
+                    if (_settings.TryGetValue(settingData.Key, out var settingConfiguration))
+                    {
+                        settingConfiguration.SettingValue.InitValue(settingData.Value);
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine(e);
+            }
         }
     }
+
+    public void TryExecuteAllCommands()
+    {
+        foreach ((_, var settingConfiguration) in _settings)
+        {
+            settingConfiguration.SettingValue.ApplyChange();
+        }
+    }
+
     protected override void DestoryManagedResource()
     {
         _settings.Clear();
+        _groupInfos.Clear();
     }
 
     protected override void DestoryUnmanagedResource() { }
