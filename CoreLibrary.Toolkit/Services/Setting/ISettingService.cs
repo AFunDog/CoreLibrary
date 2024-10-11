@@ -12,34 +12,23 @@ namespace CoreLibrary.Toolkit.Services.Setting
     /// </summary>
     public interface ISettingService
     {
+        public static ISettingService Implement => new SettingService();
+
+        ///// <summary>
+        ///// 设置字典
+        ///// </summary>
+        //IReadOnlyDictionary<string, SettingConfig> Settings { get; }
+
         /// <summary>
         /// 设置字典
         /// </summary>
-        IReadOnlyDictionary<string, SettingConfiguration> Settings { get; }
-
-        /// <summary>
-        /// 设置分组信息
-        /// </summary>
-        IReadOnlyDictionary<string, IReadOnlyDictionary<string, IReadOnlyCollection<string>>> GroupInfos { get; }
-
-        /// <summary>
-        /// 设置信息配置器
-        /// </summary>
-        interface ISettingServiceBuilder
-        {
-            ISettingServiceBuilder ConfigureGroup(string groupKey);
-            ISettingServiceBuilder ConfigureSetting(
-                SettingConfiguration settingConfiguration,
-                string? groupKey = null,
-                string? ownerKey = null
-            );
-        }
+        SettingCollectionNode Settings { get; }
 
         /// <summary>
         /// 配置设置信息
         /// </summary>
         /// <param name="builder">配置器</param>
-        void BuildSettings(Action<ISettingServiceBuilder> builder);
+        void BuildSettings(Action<SettingsBuilder> builder);
 
         /// <summary>
         /// 快速获取某个设置键的值
@@ -47,6 +36,13 @@ namespace CoreLibrary.Toolkit.Services.Setting
         /// <param name="key">设置键</param>
         /// <returns>值</returns>
         object? GetSettingValue(string key);
+
+        /// <summary>
+        /// 快速获取某个设置键的值
+        /// </summary>
+        /// <param name="key">设置键</param>
+        /// <returns>值</returns>
+        T? GetSettingValue<T>(string key);
 
         /// <summary>
         /// 快速设置某个设置键的值，会触发更改命令
@@ -70,18 +66,18 @@ namespace CoreLibrary.Toolkit.Services.Setting
         Task SaveSettingsAsync(string filePath, CancellationToken cancellationToken = default);
 
         /// <summary>
-        /// 读取文件夹中所有设置文件的数据
+        /// 读取设置文件的数据
         /// </summary>
-        /// <param name="dirPath">文件夹路径</param>
-        void ReadSettings(string dirPath);
+        /// <param name="filePath">文件路径</param>
+        void ReadSettings(string filePath);
 
         /// <summary>
-        /// 读取文件夹中所有设置文件的数据
+        /// 读取设置文件的数据
         /// </summary>
-        /// <param name="dirPath">文件夹路径</param>
+        /// <param name="filePath">文件路径</param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        Task ReadSettingsAsync(string dirPath, CancellationToken cancellationToken = default);
+        Task ReadSettingsAsync(string filePath, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// 尝试执行所有更改命令，并不会实际改变设置的值，只是触发命令。

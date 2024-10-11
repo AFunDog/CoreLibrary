@@ -26,7 +26,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.3.0" />
+		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.3.1" />
 		<PackageReference Include="CommunityToolkit.WinUI.Animations" Version="8.1.240821" />
 		<PackageReference Include="CommunityToolkit.WinUI.Behaviors" Version="8.1.240821" />
 		<PackageReference Include="CommunityToolkit.WinUI.Controls.SettingsControls" Version="8.1.240821" />
@@ -40,8 +40,8 @@
 		</PackageReference>
 		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0" />
 		<PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.26100.1" />
-		<PackageReference Include="Microsoft.WindowsAppSDK" Version="1.5.240802000" />
-		<PackageReference Include="WinUIEx" Version="2.3.4" />
+		<PackageReference Include="Microsoft.WindowsAppSDK" Version="1.6.240829007" />
+		<PackageReference Include="WinUIEx" Version="2.4.0" />
 		<Manifest Include="$(ApplicationManifest)" />
 	</ItemGroup>
 

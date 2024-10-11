@@ -7,9 +7,8 @@ using System.Threading.Tasks;
 
 namespace CoreLibrary.Toolkit.Services.Setting.Structs
 {
-    public sealed record SettingConfiguration(
-        string OnlyKey,
-        SettingValue SettingValue,
-        AttachedArgs? AttachedArgs = null
-    );
+    public sealed record SettingConfig(string Key, SettingValue SettingValue, AttachedArgs? AttachedArgs = null)
+    {
+        public string SelfKey => Key.Split('.').Last();
+    }
 }

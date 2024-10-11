@@ -11,7 +11,7 @@ using Microsoft.VisualStudio.Threading;
 
 namespace CoreLibrary.Toolkit.Services.DataLoader
 {
-    public sealed class DataLoaderService : IDataLoaderService
+    internal sealed class DataLoaderService : IDataLoaderService
     {
         private readonly AsyncAutoResetEvent _signal = new();
 

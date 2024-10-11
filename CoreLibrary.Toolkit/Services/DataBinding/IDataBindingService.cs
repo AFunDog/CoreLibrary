@@ -8,12 +8,15 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using CoreLibrary.Toolkit.Services.DataBinding.Contracts;
+using CoreLibrary.Toolkit.Services.Setting;
 
 namespace CoreLibrary.Toolkit.Services.DataBinding
 {
     public interface IDataBindingService
     {
-        DataBindingService Bind(
+        public static IDataBindingService Implement => new DataBindingService();
+
+        IDataBindingService Bind(
             INotifyPropertyChanged source,
             string sourceProperty,
             object target,
@@ -21,21 +24,21 @@ namespace CoreLibrary.Toolkit.Services.DataBinding
             IValueConverter? valueConverter = null
         );
 
-        DataBindingService UnBind(
+        IDataBindingService UnBind(
             INotifyPropertyChanged source,
             string sourceProperty,
             object target,
             string targetProperty
         );
 
-        DataBindingService BindCollection(
+        IDataBindingService BindCollection(
             INotifyCollectionChanged collection,
             Action<INotifyCollectionChanged, IList> itemsAdded,
             Action<INotifyCollectionChanged, IList> itemsRemoved
         );
 
-        DataBindingService UnBindCollection(INotifyCollectionChanged collection);
-        DataBindingService UnBindCollection(
+        IDataBindingService UnBindCollection(INotifyCollectionChanged collection);
+        IDataBindingService UnBindCollection(
             INotifyCollectionChanged collection,
             Action<INotifyCollectionChanged, IList> itemsAdded,
             Action<INotifyCollectionChanged, IList> itemsRemoved

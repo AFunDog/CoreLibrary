@@ -6,4 +6,4 @@ using System.Threading.Tasks;
 
 namespace CoreLibrary.Toolkit.Services.Setting.Structs;
 
-public sealed record class EnumValue(string EnumUid, object Parameter);
+public sealed record class EnumValue(string EnumKey, object Parameter);

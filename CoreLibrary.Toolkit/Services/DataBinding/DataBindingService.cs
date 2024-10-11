@@ -14,7 +14,7 @@ using CoreLibrary.Toolkit.Services.DataBinding.ValueConverters;
 
 namespace CoreLibrary.Toolkit.Services.DataBinding
 {
-    public sealed class DataBindingService : DisposableObject, IDataBindingService
+    internal sealed class DataBindingService : DisposableObject, IDataBindingService
     {
         // source sourceProperty bindingInfo
         private readonly Dictionary<INotifyPropertyChanged, Dictionary<string, List<BindingInfo>>> _bindings = [];
@@ -26,7 +26,7 @@ namespace CoreLibrary.Toolkit.Services.DataBinding
             )>
         > _bindCollections = [];
 
-        public DataBindingService Bind(
+        public IDataBindingService Bind(
             INotifyPropertyChanged source,
             string sourceProperty,
             object target,
@@ -71,7 +71,7 @@ namespace CoreLibrary.Toolkit.Services.DataBinding
             return this;
         }
 
-        public DataBindingService UnBind(
+        public IDataBindingService UnBind(
             INotifyPropertyChanged source,
             string sourceProperty,
             object target,
@@ -99,7 +99,7 @@ namespace CoreLibrary.Toolkit.Services.DataBinding
             return this;
         }
 
-        public DataBindingService BindCollection(
+        public IDataBindingService BindCollection(
             INotifyCollectionChanged collection,
             Action<INotifyCollectionChanged, IList> itemsAdded,
             Action<INotifyCollectionChanged, IList> itemsRemoved
@@ -118,7 +118,7 @@ namespace CoreLibrary.Toolkit.Services.DataBinding
             return this;
         }
 
-        public DataBindingService UnBindCollection(INotifyCollectionChanged collection)
+        public IDataBindingService UnBindCollection(INotifyCollectionChanged collection)
         {
             if (_bindCollections.TryGetValue(collection, out var list))
             {
@@ -128,7 +128,7 @@ namespace CoreLibrary.Toolkit.Services.DataBinding
             return this;
         }
 
-        public DataBindingService UnBindCollection(
+        public IDataBindingService UnBindCollection(
             INotifyCollectionChanged collection,
             Action<INotifyCollectionChanged, IList> itemsAdded,
             Action<INotifyCollectionChanged, IList> itemsRemoved

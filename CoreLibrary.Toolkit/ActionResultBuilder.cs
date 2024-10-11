@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using CoreLibrary.Core.Structs;
@@ -43,6 +44,14 @@ namespace CoreLibrary.Toolkit
         public virtual ActionResult Error(string message, string extendMessage = "")
         {
             _lastResult = ActionResult.Error(message);
+            _extendMessage = extendMessage;
+            _createAction?.Invoke(_lastResult, extendMessage);
+            return _lastResult;
+        }
+
+        public virtual ActionResult From(ActionResult result, string extendMessage = "")
+        {
+            _lastResult = result;
             _extendMessage = extendMessage;
             _createAction?.Invoke(_lastResult, extendMessage);
             return _lastResult;

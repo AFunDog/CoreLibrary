@@ -9,6 +9,8 @@ namespace CoreLibrary.Toolkit.Services.Localization
 {
     public interface ILocalizeService
     {
+        public static ILocalizeService Implement => new LocalizeService();
+
         event Action<ILocalizeService, CultureInfo>? CurrentCultureChanged;
 
         CultureInfo CurrentCultrue { get; set; }

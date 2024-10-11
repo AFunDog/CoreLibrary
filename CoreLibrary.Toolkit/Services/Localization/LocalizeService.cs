@@ -10,7 +10,7 @@ using CoreLibrary.Core.BasicObjects;
 
 namespace CoreLibrary.Toolkit.Services.Localization
 {
-    public sealed class LocalizeService : DisposableObject, ILocalizeService
+    internal sealed class LocalizeService : DisposableObject, ILocalizeService
     {
         private readonly Dictionary<CultureInfo, Dictionary<string, string>> _localizations = [];
         private Action? _localizeActions;

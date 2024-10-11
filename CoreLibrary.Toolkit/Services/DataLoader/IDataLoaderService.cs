@@ -8,6 +8,8 @@ namespace CoreLibrary.Toolkit.Services.DataLoader
 {
     public interface IDataLoaderService
     {
+        public static IDataLoaderService Implement => new DataLoaderService();
+
         /// <summary>
         /// 设置同步加载器
         /// </summary>
