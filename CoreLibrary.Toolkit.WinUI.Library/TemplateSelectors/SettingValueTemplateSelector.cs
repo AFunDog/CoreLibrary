@@ -4,7 +4,6 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using CoreServices.Setting.Structs;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 

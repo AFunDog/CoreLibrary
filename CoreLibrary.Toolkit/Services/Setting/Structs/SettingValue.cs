@@ -128,7 +128,7 @@ public class SettingValue : INotifyPropertyChanging, INotifyPropertyChanged
 
     protected virtual void OnInternalValueChanging(SettingValue sender, SettingValueChangeEvenArgs e)
     {
-        Debug.WriteLine($"{e.NewValue} {e.OldValue}");
+        //Debug.WriteLine($"{e.NewValue} {e.OldValue}");
         if (_command.CanExecuteChangingCommand(sender, e))
             _command.ExecuteSettingValueChangingCommand(sender, e);
     }

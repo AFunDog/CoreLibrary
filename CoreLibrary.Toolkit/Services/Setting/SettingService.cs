@@ -10,6 +10,7 @@ using System.IO;
 using System.IO.Pipes;
 using System.Linq;
 using System.Net.WebSockets;
+using System.Reflection.PortableExecutable;
 using System.Text;
 using System.Threading.Tasks;
 using CoreLibrary.Core.BasicObjects;
@@ -20,128 +21,41 @@ namespace CoreLibrary.Toolkit.Services.Setting;
 
 public sealed class SettingsBuilder
 {
-    internal SettingService SettingService { get; }
-    internal Dictionary<string, SettingConfig> Settings { get; } = [];
-    internal Dictionary<string, SettingGroupBuilder> Groups { get; } = [];
+    // 配置项目 Key 不能包含这个字符
+    const char PathSeparator = '.';
 
-    internal SettingsBuilder(SettingService settingService)
+    private readonly string _key;
+    private readonly List<SettingNode> _nodes = [];
+
+    public SettingsBuilder(string key = "")
     {
-        SettingService = settingService;
+        _key = key;
     }
 
-    public sealed class SettingGroupBuilder
+    public SettingsBuilder ConfigSetting(SettingConfig settingConfig)
     {
-        internal string GroupKey { get; }
-        internal Dictionary<string, SettingConfig> Settings { get; } = [];
-        internal Dictionary<string, SettingPartBuilder> Parts { get; } = [];
-
-        internal SettingGroupBuilder(string groupKey)
-        {
-            GroupKey = groupKey;
-        }
-
-        public sealed class SettingPartBuilder
-        {
-            internal string GroupKey { get; }
-            internal string PartKey { get; }
-            internal Dictionary<string, SettingConfig> Settings { get; } = [];
-
-            internal SettingPartBuilder(string groupKey, string partKey)
-            {
-                GroupKey = groupKey;
-                PartKey = partKey;
-            }
-
-            public SettingPartBuilder ConfigureSetting(
-                string key,
-                SettingValue settingValue,
-                AttachedArgs? attachedArgs = null
-            )
-            {
-                Settings[key] = new(GetSettingKey(key), settingValue, attachedArgs);
-                return this;
-            }
-
-            internal string GetSettingKey(string settingKey) =>
-                string.Format("{0}.{1}.{2}", GroupKey, PartKey, settingKey);
-        }
-
-        public SettingPartBuilder ConfigurePart(string partKey)
-        {
-            Settings.Remove(partKey);
-            Parts.Remove(partKey);
-            var newPart = new SettingPartBuilder(GroupKey, partKey);
-            Parts.Add(partKey, newPart);
-            return newPart;
-        }
-
-        public SettingGroupBuilder ConfigureSetting(
-            string key,
-            SettingValue settingValue,
-            AttachedArgs? attachedArgs = null
-        )
-        {
-            Settings.Remove(key);
-            Parts.Remove(key);
-            Settings[key] = new(GetSettingKey(key), settingValue, attachedArgs);
+        if (settingConfig.Key.Contains(PathSeparator))
             return this;
-        }
 
-        internal string GetSettingKey(string settingKey) => string.Format("{0}.{1}", GroupKey, settingKey);
-    }
-
-    public SettingGroupBuilder ConfigureGroup(string groupKey)
-    {
-        Settings.Remove(groupKey);
-        Groups.Remove(groupKey);
-        var newGroup = new SettingGroupBuilder(groupKey);
-        Groups.Add(groupKey, newGroup);
-        return newGroup;
-    }
-
-    public SettingsBuilder ConfigureSetting(string key, SettingValue settingValue, AttachedArgs? attachedArgs = null)
-    {
-        Settings.Remove(key);
-        Groups.Remove(key);
-        Settings[key] = new(GetSettingKey(key), settingValue, attachedArgs);
+        _nodes.Add(new SettingConfigNode(settingConfig));
         return this;
     }
 
-    internal string GetSettingKey(string settingKey) => settingKey;
+    public SettingsBuilder ConfigSettings(string key, Action<SettingsBuilder> childrenBuilder)
+    {
+        if (key.Contains(PathSeparator))
+            return this;
 
-    internal SettingCollectionNode BuildSettings() =>
-        new(
-            "Root",
-            Settings
-                .Select(kv => new KeyValuePair<string, SettingNode>(kv.Key, new SettingConfigNode(kv.Value)))
-                .Concat(
-                    Groups.Select(kv => new KeyValuePair<string, SettingNode>(
-                        kv.Key,
-                        new SettingCollectionNode(
-                            kv.Key,
-                            kv.Value.Settings.Select(kv => new KeyValuePair<string, SettingNode>(
-                                    kv.Key,
-                                    new SettingConfigNode(kv.Value)
-                                ))
-                                .Concat(
-                                    kv.Value.Parts.Select(kv => new KeyValuePair<string, SettingNode>(
-                                        kv.Key,
-                                        new SettingCollectionNode(
-                                            kv.Key,
-                                            kv.Value.Settings.Select(kv => new KeyValuePair<string, SettingNode>(
-                                                    kv.Key,
-                                                    new SettingConfigNode(kv.Value)
-                                                ))
-                                                .ToFrozenDictionary()
-                                        )
-                                    ))
-                                )
-                                .ToFrozenDictionary()
-                        )
-                    ))
-                )
-                .ToFrozenDictionary()
-        );
+        var children = new SettingsBuilder(key);
+        childrenBuilder(children);
+        _nodes.Add(children.BuildSettings());
+        return this;
+    }
+
+    public SettingCollectionNode BuildSettings()
+    {
+        return new SettingCollectionNode(_key, _nodes.ToDictionary(node => node.Key));
+    }
 }
 
 internal sealed class SettingService : DisposableObject, ISettingService
@@ -153,12 +67,13 @@ internal sealed class SettingService : DisposableObject, ISettingService
 
     public void BuildSettings(Action<SettingsBuilder> builder)
     {
-        var settingBuilder = new SettingsBuilder(this);
+        var settingBuilder = new SettingsBuilder();
         builder(settingBuilder);
         _settings = settingBuilder.BuildSettings();
     }
 
-    public void SetSettingValue(string key, object value)
+    public void SetSettingValue<T>(string key, T value)
+        where T : notnull
     {
         if (GetSettingConfig(key) is SettingConfig config)
         {
@@ -167,14 +82,14 @@ internal sealed class SettingService : DisposableObject, ISettingService
         }
     }
 
-    public object? GetSettingValue(string key)
+    public SettingValue? GetSettingValue(string key)
     {
-        return GetSettingConfig(key)?.SettingValue.Value;
+        return GetSettingConfig(key)?.SettingValue;
     }
 
     public T? GetSettingValue<T>(string key)
     {
-        if (GetSettingValue(key) is T value)
+        if (GetSettingValue(key) is SettingValue settingValue && settingValue.Value is T value)
         {
             return value;
         }
@@ -183,8 +98,9 @@ internal sealed class SettingService : DisposableObject, ISettingService
 
     public void SaveSettings(string filePath)
     {
-        if (!Directory.Exists(Path.GetDirectoryName(filePath)))
-            Directory.CreateDirectory(Path.GetDirectoryName(filePath)!);
+        var dirPath = Path.GetDirectoryName(filePath);
+        if (!string.IsNullOrEmpty(dirPath) && !Directory.Exists(dirPath))
+            Directory.CreateDirectory(dirPath);
         if (!File.Exists(filePath))
             File.Create(filePath).Close();
 
@@ -298,15 +214,28 @@ internal sealed class SettingService : DisposableObject, ISettingService
     {
         List<SettingRecord> records = [];
 
-        Settings.ForEach(node =>
-        {
-            if (node is SettingConfigNode configNode)
-            {
-                records.Add(new SettingRecord(configNode.Config.Key, configNode.Config.SettingValue.Value));
-            }
-        });
+        SettingCollectionNodeToRecords("", Settings);
 
         return records;
+
+        void SettingCollectionNodeToRecords(string path, SettingCollectionNode collectionNode)
+        {
+            foreach ((var key, var settingNode) in collectionNode.Values)
+            {
+                var curPath = string.IsNullOrEmpty(path) ? key : string.Format("{0}.{1}", path, key);
+                switch (settingNode)
+                {
+                    case SettingConfigNode configNode:
+                        records.Add(new(curPath, configNode.Config.SettingValue.Value));
+                        break;
+                    case SettingCollectionNode children:
+                        SettingCollectionNodeToRecords(curPath, children);
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
     }
 
     protected override void DisposeManagedResource()

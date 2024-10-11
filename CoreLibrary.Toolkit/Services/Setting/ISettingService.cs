@@ -14,28 +14,23 @@ namespace CoreLibrary.Toolkit.Services.Setting
     {
         public static ISettingService Implement => new SettingService();
 
-        ///// <summary>
-        ///// 设置字典
-        ///// </summary>
-        //IReadOnlyDictionary<string, SettingConfig> Settings { get; }
-
         /// <summary>
-        /// 设置字典
+        /// 设置项目集合
         /// </summary>
         SettingCollectionNode Settings { get; }
 
         /// <summary>
-        /// 配置设置信息
+        /// 配置设置项目信息
         /// </summary>
         /// <param name="builder">配置器</param>
         void BuildSettings(Action<SettingsBuilder> builder);
 
         /// <summary>
-        /// 快速获取某个设置键的值
+        /// 快速获取某个设置键的设置值
         /// </summary>
         /// <param name="key">设置键</param>
         /// <returns>值</returns>
-        object? GetSettingValue(string key);
+        SettingValue? GetSettingValue(string key);
 
         /// <summary>
         /// 快速获取某个设置键的值
@@ -49,7 +44,8 @@ namespace CoreLibrary.Toolkit.Services.Setting
         /// </summary>
         /// <param name="key">设置键</param>
         /// <param name="value">值</param>
-        void SetSettingValue(string key, object value);
+        void SetSettingValue<T>(string key, T value)
+            where T : notnull;
 
         /// <summary>
         /// 保存设置到本地文件

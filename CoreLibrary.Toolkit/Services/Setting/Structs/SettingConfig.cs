@@ -9,6 +9,6 @@ namespace CoreLibrary.Toolkit.Services.Setting.Structs
 {
     public sealed record SettingConfig(string Key, SettingValue SettingValue, AttachedArgs? AttachedArgs = null)
     {
-        public string SelfKey => Key.Split('.').Last();
+        //public string SelfKey => Key.Split('.').Last();
     }
 }

@@ -25,5 +25,5 @@ namespace CoreLibrary.Toolkit.Services.Setting.Structs
         }
     }
 
-    public sealed record SettingConfigNode(SettingConfig Config) : SettingNode(Config.SelfKey);
+    public sealed record SettingConfigNode(SettingConfig Config) : SettingNode(Config.Key);
 }

@@ -5,8 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
-using CoreServices.Setting;
-using CoreServices.Setting.Structs;
+using CoreLibrary.Toolkit.Services.Setting;
 using Windows.Media.Core;
 
 namespace CoreServicesWinUILibrary.ViewModels
