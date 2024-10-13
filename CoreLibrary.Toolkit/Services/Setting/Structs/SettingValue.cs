@@ -9,12 +9,6 @@ using CoreLibrary.Toolkit.Services.Setting.Contracts;
 
 namespace CoreLibrary.Toolkit.Services.Setting.Structs;
 
-public sealed class SettingValueChangeEvenArgs(object oldValue, object newValue) : EventArgs
-{
-    public object OldValue { get; } = oldValue;
-    public object NewValue { get; } = newValue;
-}
-
 public class SettingValue : INotifyPropertyChanging, INotifyPropertyChanged
 {
     protected bool _isChanged;
@@ -56,13 +50,14 @@ public class SettingValue : INotifyPropertyChanging, INotifyPropertyChanged
         get => _internalValue;
         protected set
         {
-            if (!CanModfiyInternalValue(this, new(_internalValue, value)))
+            var args = new SettingValueChangeEventArgs(this, _internalValue, value);
+            if (!CanModfiyInternalValue(this, args))
                 return;
-            OnInternalValueChanging(this, new(_internalValue, value));
+            OnInternalValueChanging(this, args);
             _internalValue = value;
             Value = value;
             IsChanged = true;
-            OnInternalValueChanged(this, new(_internalValue, value));
+            OnInternalValueChanged(this, args);
         }
     }
 
@@ -123,17 +118,17 @@ public class SettingValue : INotifyPropertyChanging, INotifyPropertyChanged
         InternalValue = _defValue;
     }
 
-    protected virtual bool CanModfiyInternalValue(SettingValue sender, SettingValueChangeEvenArgs e) =>
+    protected virtual bool CanModfiyInternalValue(SettingValue sender, SettingValueChangeEventArgs e) =>
         _command.CanModifySettingValue(sender, e);
 
-    protected virtual void OnInternalValueChanging(SettingValue sender, SettingValueChangeEvenArgs e)
+    protected virtual void OnInternalValueChanging(SettingValue sender, SettingValueChangeEventArgs e)
     {
         //Debug.WriteLine($"{e.NewValue} {e.OldValue}");
         if (_command.CanExecuteChangingCommand(sender, e))
             _command.ExecuteSettingValueChangingCommand(sender, e);
     }
 
-    protected virtual void OnInternalValueChanged(SettingValue sender, SettingValueChangeEvenArgs e)
+    protected virtual void OnInternalValueChanged(SettingValue sender, SettingValueChangeEventArgs e)
     {
         if (_command.CanExecuteChangedCommand(sender, e))
             _command.ExecuteSettingValueChangedCommand(sender, e);

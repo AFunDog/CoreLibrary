@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -8,11 +9,19 @@ using CoreLibrary.Toolkit.Services.Setting.Structs;
 namespace CoreLibrary.Toolkit.Services.Setting
 {
     /// <summary>
-    /// 设置服务
+    /// <see cref="ISettingService"/> 设置服务
     /// </summary>
     public interface ISettingService
     {
+        /// <summary>
+        /// 获取 <see cref="ISettingService"/> 的实现实例
+        /// </summary>
         public static ISettingService Implement => new SettingService();
+
+        ///// <summary>
+        ///// 设置项目值发生改变事件
+        ///// </summary>
+        //public event Action<ISettingService, SettingValueChangeEventArgs>? SettingValueChanged;
 
         /// <summary>
         /// 设置项目集合

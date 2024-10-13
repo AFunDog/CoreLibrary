@@ -8,38 +8,38 @@ using CoreLibrary.Toolkit.Services.Setting.Contracts;
 namespace CoreLibrary.Toolkit.Services.Setting.Structs;
 
 public sealed class SettingValueCommand(
-    Action<SettingValue, SettingValueChangeEvenArgs>? executeSettingValueChangedCommand = null,
-    Action<SettingValue, SettingValueChangeEvenArgs>? executeSettingValueChangingCommand = null,
-    Func<SettingValue, SettingValueChangeEvenArgs, bool>? canExecuteChangedCommand = null,
-    Func<SettingValue, SettingValueChangeEvenArgs, bool>? canExecuteChangingCommand = null,
-    Func<SettingValue, SettingValueChangeEvenArgs, bool>? canModifySettingValue = null
+    Action<SettingValue, SettingValueChangeEventArgs>? executeSettingValueChangedCommand = null,
+    Action<SettingValue, SettingValueChangeEventArgs>? executeSettingValueChangingCommand = null,
+    Func<SettingValue, SettingValueChangeEventArgs, bool>? canExecuteChangedCommand = null,
+    Func<SettingValue, SettingValueChangeEventArgs, bool>? canExecuteChangingCommand = null,
+    Func<SettingValue, SettingValueChangeEventArgs, bool>? canModifySettingValue = null
 ) : ISettingValueCommand
 {
-    private static readonly Func<SettingValue, SettingValueChangeEvenArgs, bool> DefaultCanFunc = (s, e) => true;
+    private static readonly Func<SettingValue, SettingValueChangeEventArgs, bool> DefaultCanFunc = (s, e) => true;
 
-    private readonly Func<SettingValue, SettingValueChangeEvenArgs, bool> _canExecuteChangedCommand =
+    private readonly Func<SettingValue, SettingValueChangeEventArgs, bool> _canExecuteChangedCommand =
         canExecuteChangedCommand ?? DefaultCanFunc;
-    private readonly Func<SettingValue, SettingValueChangeEvenArgs, bool> _canExecuteChangingCommand =
+    private readonly Func<SettingValue, SettingValueChangeEventArgs, bool> _canExecuteChangingCommand =
         canExecuteChangingCommand ?? DefaultCanFunc;
-    private readonly Func<SettingValue, SettingValueChangeEvenArgs, bool> _canModifySettingValue =
+    private readonly Func<SettingValue, SettingValueChangeEventArgs, bool> _canModifySettingValue =
         canModifySettingValue ?? DefaultCanFunc;
-    private readonly Action<SettingValue, SettingValueChangeEvenArgs>? _executeSettingValueChangedCommand =
+    private readonly Action<SettingValue, SettingValueChangeEventArgs>? _executeSettingValueChangedCommand =
         executeSettingValueChangedCommand;
-    private readonly Action<SettingValue, SettingValueChangeEvenArgs>? _executeSettingValueChangingCommand =
+    private readonly Action<SettingValue, SettingValueChangeEventArgs>? _executeSettingValueChangingCommand =
         executeSettingValueChangingCommand;
 
-    public bool CanExecuteChangedCommand(SettingValue sender, SettingValueChangeEvenArgs args) =>
+    public bool CanExecuteChangedCommand(SettingValue sender, SettingValueChangeEventArgs args) =>
         _canExecuteChangedCommand(sender, args);
 
-    public bool CanExecuteChangingCommand(SettingValue sender, SettingValueChangeEvenArgs args) =>
+    public bool CanExecuteChangingCommand(SettingValue sender, SettingValueChangeEventArgs args) =>
         _canExecuteChangingCommand(sender, args);
 
-    public bool CanModifySettingValue(SettingValue sender, SettingValueChangeEvenArgs args) =>
+    public bool CanModifySettingValue(SettingValue sender, SettingValueChangeEventArgs args) =>
         _canModifySettingValue(sender, args);
 
-    public void ExecuteSettingValueChangedCommand(SettingValue sender, SettingValueChangeEvenArgs args) =>
+    public void ExecuteSettingValueChangedCommand(SettingValue sender, SettingValueChangeEventArgs args) =>
         _executeSettingValueChangedCommand?.Invoke(sender, args);
 
-    public void ExecuteSettingValueChangingCommand(SettingValue sender, SettingValueChangeEvenArgs args) =>
+    public void ExecuteSettingValueChangingCommand(SettingValue sender, SettingValueChangeEventArgs args) =>
         _executeSettingValueChangingCommand?.Invoke(sender, args);
 }

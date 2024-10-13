@@ -3,6 +3,7 @@ using System.Collections.Concurrent;
 using System.Collections.Frozen;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
@@ -61,6 +62,8 @@ public sealed class SettingsBuilder
 internal sealed class SettingService : DisposableObject, ISettingService
 {
     private SettingCollectionNode? _settings;
+
+    //public event Action<ISettingService, SettingValueChangeEventArgs>? SettingValueChanged;
 
     public SettingCollectionNode Settings =>
         _settings ?? throw new InvalidOperationException($"设置服务未初始化，请先调用 {nameof(BuildSettings)}");
