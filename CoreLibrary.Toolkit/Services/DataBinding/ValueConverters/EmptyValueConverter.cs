@@ -5,13 +5,12 @@ using System.Text;
 using System.Threading.Tasks;
 using CoreLibrary.Toolkit.Services.DataBinding.Contracts;
 
-namespace CoreLibrary.Toolkit.Services.DataBinding.ValueConverters
+namespace CoreLibrary.Toolkit.Services.DataBinding.ValueConverters;
+
+public sealed class EmptyValueConverter : IValueConverter
 {
-    public sealed class EmptyValueConverter : IValueConverter
+    public object Convert(object sourceValue, Type targetType, object? parameter)
     {
-        public object Convert(object sourceValue, Type targetType, object? parameter)
-        {
-            return sourceValue;
-        }
+        return sourceValue;
     }
 }

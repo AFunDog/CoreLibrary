@@ -1,10 +1,9 @@
-﻿namespace CoreLibrary.Toolkit.ExecuteChain
+﻿namespace CoreLibrary.Toolkit.ExecuteChain;
+
+public static class ExecuteChainBuilder
 {
-    public static class ExecuteChainBuilder
+    public static ExecuteChainConfig Create()
     {
-        public static ExecuteChainConfig Create()
-        {
-            return new();
-        }
+        return new();
     }
 }

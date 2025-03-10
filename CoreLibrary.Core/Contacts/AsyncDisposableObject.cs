@@ -1,32 +1,32 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection.Emit;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CoreLibrary.Core.BasicObjects;
+namespace CoreLibrary.Core.Contacts;
 
-public abstract class DisposableObject : IDisposable
+public abstract class AsyncDisposableObject : IAsyncDisposable
 {
     public bool Disposed { get; protected set; }
 
-    public void Dispose()
+    public async ValueTask DisposeAsync()
     {
-        Dispose(true);
+        await DisposeAsync(true);
         GC.SuppressFinalize(this);
     }
 
-    protected virtual void Dispose(bool disposing)
+    protected virtual async ValueTask DisposeAsync(bool disposing)
     {
         if (Disposed)
             return;
         if (disposing)
         {
-            DisposeManagedResource();
+            await DisposeManagedResourceAsync();
         }
-        DisposeUnmanagedResource();
-        OnDisposed();
+        await DisposeUnmanagedResourceAsync();
+        await OnDisposedAsync();
         Disposed = true;
     }
 
@@ -34,9 +34,9 @@ public abstract class DisposableObject : IDisposable
     /// 释放托管资源
     /// </summary>
     /// <remarks>
-    /// 当调用 <see cref="Dispose()"/> 即主动释放时调用
+    /// 当调用 <see cref="DisposeAsync()"/> 即主动释放时调用
     /// </remarks>
-    protected abstract void DisposeManagedResource();
+    protected abstract ValueTask DisposeManagedResourceAsync();
 
     /// <summary>
     /// 释放非托管资源
@@ -45,16 +45,14 @@ public abstract class DisposableObject : IDisposable
     /// 当对象被释放时调用
     /// 包括 <see cref="GC"/> 回收和主动释放
     /// </remarks>>
-    protected abstract void DisposeUnmanagedResource();
+    protected abstract ValueTask DisposeUnmanagedResourceAsync();
 
     /// <summary>
-    /// 当对象被释放时的触发函数
+    /// 当对象被释放后的触发函数
     /// </summary>
     /// <remarks>
     /// 当对象被回收时调用
     /// 包括 <see cref="GC"/> 回收和主动释放
     /// </remarks>>
-    protected abstract void OnDisposed();
-
-    ~DisposableObject() => Dispose(false);
+    protected abstract ValueTask OnDisposedAsync();
 }

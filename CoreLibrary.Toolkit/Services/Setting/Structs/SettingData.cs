@@ -8,8 +8,7 @@ using MessagePack.Formatters;
 
 namespace CoreLibrary.Toolkit.Services.Setting.Structs;
 
-[MessagePackObject]
-public readonly record struct SettingRecord(
-    [property: Key(0)] string Key,
-    [property: Key(1), MessagePackFormatter(typeof(TypelessFormatter))] object Value
+internal readonly record struct SettingData(
+    string Token,
+    [property: MessagePackFormatter(typeof(TypelessFormatter))] object? Value
 );

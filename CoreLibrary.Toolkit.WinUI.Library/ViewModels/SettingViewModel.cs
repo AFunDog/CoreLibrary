@@ -8,29 +8,28 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CoreLibrary.Toolkit.Services.Setting;
 using Windows.Media.Core;
 
-namespace CoreServicesWinUILibrary.ViewModels
+namespace CoreServicesWinUILibrary.ViewModels;
+
+internal sealed record GroupInfo(string GroupKey, List<SettingNodeInfo> Settings);
+
+internal sealed record SettingNodeInfo(SettingConfiguration Configuration, List<SettingInfo> Kids)
+    : SettingInfo(Configuration);
+
+internal record SettingInfo(SettingConfiguration Configuration);
+
+internal sealed partial class SettingViewModel : ObservableRecipient
 {
-    internal sealed record GroupInfo(string GroupKey, List<SettingNodeInfo> Settings);
+    private readonly ISettingService _settingService;
 
-    internal sealed record SettingNodeInfo(SettingConfiguration Configuration, List<SettingInfo> Kids)
-        : SettingInfo(Configuration);
+    [ObservableProperty]
+    private ObservableCollection<string> _groupInfos;
 
-    internal record SettingInfo(SettingConfiguration Configuration);
+    [ObservableProperty]
+    private ObservableCollection<GroupInfo> _settings = App.Settings.Value;
 
-    internal sealed partial class SettingViewModel : ObservableRecipient
+    public SettingViewModel(ISettingService settingService)
     {
-        private readonly ISettingService _settingService;
-
-        [ObservableProperty]
-        private ObservableCollection<string> _groupInfos;
-
-        [ObservableProperty]
-        private ObservableCollection<GroupInfo> _settings = App.Settings.Value;
-
-        public SettingViewModel(ISettingService settingService)
-        {
-            _settingService = settingService;
-            _groupInfos = new(_settingService.GroupInfos.Keys);
-        }
+        _settingService = settingService;
+        _groupInfos = new(_settingService.GroupInfos.Keys);
     }
 }

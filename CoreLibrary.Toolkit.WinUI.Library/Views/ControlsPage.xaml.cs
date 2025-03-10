@@ -21,16 +21,15 @@ using Windows.UI;
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
 
-namespace CoreServicesWinUILibrary.Views
+namespace CoreServicesWinUILibrary.Views;
+
+/// <summary>
+/// An empty page that can be used on its own or navigated to within a Frame.
+/// </summary>
+public sealed partial class ControlsPage : Page
 {
-    /// <summary>
-    /// An empty page that can be used on its own or navigated to within a Frame.
-    /// </summary>
-    public sealed partial class ControlsPage : Page
+    public ControlsPage()
     {
-        public ControlsPage()
-        {
-            this.InitializeComponent();
-        }
+        this.InitializeComponent();
     }
 }

@@ -21,164 +21,163 @@ using Windows.Foundation.Collections;
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
 
-namespace CoreLibrary.Toolkit.WinUI.Controls
+namespace CoreLibrary.Toolkit.WinUI.Controls;
+
+public sealed partial class CustomNavigationView : UserControl
 {
-    public sealed partial class CustomNavigationView : UserControl
+    #region Properties
+    public static DependencyProperty OpenPaneLengthProperty { get; } = NavigationView.OpenPaneLengthProperty;
+
+    public ICollection<IPageItem>? HeaderPageItems
     {
-        #region Properties
-        public static DependencyProperty OpenPaneLengthProperty { get; } = NavigationView.OpenPaneLengthProperty;
+        get => (ICollection<IPageItem>?)baseNavigationView.GetValue(NavigationView.MenuItemsSourceProperty);
+        set => baseNavigationView.SetValue(NavigationView.MenuItemsSourceProperty, value);
+    }
 
-        public ICollection<IPageItem>? HeaderPageItems
+    public ICollection<IPageItem>? FooterPageItems
+    {
+        get => (ICollection<IPageItem>?)baseNavigationView.GetValue(NavigationView.FooterMenuItemsSourceProperty);
+        set => baseNavigationView.SetValue(NavigationView.FooterMenuItemsSourceProperty, value);
+    }
+
+    public double OpenPaneLength
+    {
+        get => (double)baseNavigationView.GetValue(OpenPaneLengthProperty);
+        set => baseNavigationView.SetValue(OpenPaneLengthProperty, value);
+    }
+
+    public NavigationView BaseNavigationView => baseNavigationView;
+    public Frame ContentFrame => contentFrame;
+    public PageItem? SelectedItem => (PageItem?)baseNavigationView.SelectedItem;
+
+    #endregion
+
+
+    public CustomNavigationView()
+    {
+        this.InitializeComponent();
+    }
+
+    private Type? CurrentPageType => contentFrame.Content?.GetType();
+
+    private void OnNavigated(object sender, NavigationEventArgs e)
+    {
+        baseNavigationView.SelectedItem = PageTypeToPageItem(e.SourcePageType);
+        baseNavigationView.IsBackEnabled = contentFrame.CanGoBack;
+        UpdateCanExecuteCommand();
+    }
+
+    private void OnBackRequested(NavigationView sender, NavigationViewBackRequestedEventArgs args)
+    {
+        contentFrame.GoBack();
+    }
+
+    private async void OnItemInvoked(NavigationView sender, NavigationViewItemInvokedEventArgs args)
+    {
+        var target = (baseNavigationView.MenuItemFromContainer(args.InvokedItemContainer) as IPageItem)!;
+        switch (target)
         {
-            get => (ICollection<IPageItem>?)baseNavigationView.GetValue(NavigationView.MenuItemsSourceProperty);
-            set => baseNavigationView.SetValue(NavigationView.MenuItemsSourceProperty, value);
+            case PageItem pi:
+                PageNavigate(pi);
+                break;
+            case CommandItem ci:
+                InvokeCommand(ci);
+                BackToContentPage();
+                break;
+            case AsyncCommandItem aci:
+                await InvokeAsyncCommand(aci);
+                BackToContentPage();
+                break;
+            default:
+                break;
         }
+    }
 
-        public ICollection<IPageItem>? FooterPageItems
+    private void InvokeCommand(CommandItem target)
+    {
+        target.Execute();
+    }
+
+    private async Task InvokeAsyncCommand(AsyncCommandItem target)
+    {
+        await target.ExecuteAsync();
+    }
+
+    private void UpdateCanExecuteCommand()
+    {
+        if (HeaderPageItems is not null)
         {
-            get => (ICollection<IPageItem>?)baseNavigationView.GetValue(NavigationView.FooterMenuItemsSourceProperty);
-            set => baseNavigationView.SetValue(NavigationView.FooterMenuItemsSourceProperty, value);
-        }
-
-        public double OpenPaneLength
-        {
-            get => (double)baseNavigationView.GetValue(OpenPaneLengthProperty);
-            set => baseNavigationView.SetValue(OpenPaneLengthProperty, value);
-        }
-
-        public NavigationView BaseNavigationView => baseNavigationView;
-        public Frame ContentFrame => contentFrame;
-        public PageItem? SelectedItem => (PageItem?)baseNavigationView.SelectedItem;
-
-        #endregion
-
-
-        public CustomNavigationView()
-        {
-            this.InitializeComponent();
-        }
-
-        private Type? CurrentPageType => contentFrame.Content?.GetType();
-
-        private void OnNavigated(object sender, NavigationEventArgs e)
-        {
-            baseNavigationView.SelectedItem = PageTypeToPageItem(e.SourcePageType);
-            baseNavigationView.IsBackEnabled = contentFrame.CanGoBack;
-            UpdateCanExecuteCommand();
-        }
-
-        private void OnBackRequested(NavigationView sender, NavigationViewBackRequestedEventArgs args)
-        {
-            contentFrame.GoBack();
-        }
-
-        private async void OnItemInvoked(NavigationView sender, NavigationViewItemInvokedEventArgs args)
-        {
-            var target = (baseNavigationView.MenuItemFromContainer(args.InvokedItemContainer) as IPageItem)!;
-            switch (target)
+            foreach (var item in HeaderPageItems)
             {
-                case PageItem pi:
-                    PageNavigate(pi);
-                    break;
-                case CommandItem ci:
-                    InvokeCommand(ci);
-                    BackToContentPage();
-                    break;
-                case AsyncCommandItem aci:
-                    await InvokeAsyncCommand(aci);
-                    BackToContentPage();
-                    break;
-                default:
-                    break;
-            }
-        }
-
-        private void InvokeCommand(CommandItem target)
-        {
-            target.Execute();
-        }
-
-        private async Task InvokeAsyncCommand(AsyncCommandItem target)
-        {
-            await target.ExecuteAsync();
-        }
-
-        private void UpdateCanExecuteCommand()
-        {
-            if (HeaderPageItems is not null)
-            {
-                foreach (var item in HeaderPageItems)
+                if (item is CommandItem ci)
                 {
-                    if (item is CommandItem ci)
-                    {
-                        ci.NotifyCanExecuteChanged();
-                    }
-                    else if (item is AsyncCommandItem aci)
-                    {
-                        aci.NotifyCanExecuteChanged();
-                    }
+                    ci.NotifyCanExecuteChanged();
                 }
-            }
-            if (FooterPageItems is not null)
-            {
-                foreach (var item in FooterPageItems)
+                else if (item is AsyncCommandItem aci)
                 {
-                    if (item is CommandItem ci)
-                    {
-                        ci.NotifyCanExecuteChanged();
-                    }
-                    else if (item is AsyncCommandItem aci)
-                    {
-                        aci.NotifyCanExecuteChanged();
-                    }
+                    aci.NotifyCanExecuteChanged();
                 }
             }
         }
-
-        private void PageNavigate(PageItem target)
+        if (FooterPageItems is not null)
         {
-            if (CurrentPageType is null || CurrentPageType != target.PageType)
+            foreach (var item in FooterPageItems)
             {
-                if (
-                    CurrentPageType is not null
-                    && PageTypeToPageItem(CurrentPageType) is PageItem pageItem
-                    && pageItem.TransitionSelector is not null
-                    && pageItem.TransitionSelector.GetTransition(target.PageType) is NavigationTransitionInfo tran
-                )
+                if (item is CommandItem ci)
                 {
-                    contentFrame.Navigate(target.PageType, null, tran);
+                    ci.NotifyCanExecuteChanged();
                 }
-                else
+                else if (item is AsyncCommandItem aci)
                 {
-                    contentFrame.Navigate(target.PageType);
+                    aci.NotifyCanExecuteChanged();
                 }
             }
         }
+    }
 
-        private void BackToContentPage()
-        {
-            if (contentFrame.Content is null)
-                return;
-            baseNavigationView.SelectedItem = PageTypeToPageItem(contentFrame.Content.GetType());
-        }
-
-        private PageItem? PageTypeToPageItem(Type type)
+    private void PageNavigate(PageItem target)
+    {
+        if (CurrentPageType is null || CurrentPageType != target.PageType)
         {
             if (
-                HeaderPageItems is not null
-                && HeaderPageItems.FirstOrDefault(p => (p is PageItem pi && pi.PageType == type)) is PageItem hpi
+                CurrentPageType is not null
+                && PageTypeToPageItem(CurrentPageType) is PageItem pageItem
+                && pageItem.TransitionSelector is not null
+                && pageItem.TransitionSelector.GetTransition(target.PageType) is NavigationTransitionInfo tran
             )
             {
-                return hpi;
+                contentFrame.Navigate(target.PageType, null, tran);
             }
-            if (
-                FooterPageItems is not null
-                && FooterPageItems.FirstOrDefault(p => (p is PageItem pi && pi.PageType == type)) is PageItem fpi
-            )
+            else
             {
-                return fpi;
+                contentFrame.Navigate(target.PageType);
             }
-            return null;
         }
+    }
+
+    private void BackToContentPage()
+    {
+        if (contentFrame.Content is null)
+            return;
+        baseNavigationView.SelectedItem = PageTypeToPageItem(contentFrame.Content.GetType());
+    }
+
+    private PageItem? PageTypeToPageItem(Type type)
+    {
+        if (
+            HeaderPageItems is not null
+            && HeaderPageItems.FirstOrDefault(p => (p is PageItem pi && pi.PageType == type)) is PageItem hpi
+        )
+        {
+            return hpi;
+        }
+        if (
+            FooterPageItems is not null
+            && FooterPageItems.FirstOrDefault(p => (p is PageItem pi && pi.PageType == type)) is PageItem fpi
+        )
+        {
+            return fpi;
+        }
+        return null;
     }
 }

@@ -5,13 +5,12 @@ using System.Text;
 using System.Threading.Tasks;
 using CoreLibrary.Toolkit.Services.DataBinding.Contracts;
 
-namespace CoreLibrary.Toolkit.Services.DataBinding.ValueConverters
+namespace CoreLibrary.Toolkit.Services.DataBinding.ValueConverters;
+
+public sealed class StringToNumValueConverter : IValueConverter
 {
-    public sealed class StringToNumValueConverter : IValueConverter
+    public object Convert(object sourceValue, Type targetType, object? parameter)
     {
-        public object Convert(object sourceValue, Type targetType, object? parameter)
-        {
-            return int.Parse((string)sourceValue);
-        }
+        return int.Parse((string)sourceValue);
     }
 }

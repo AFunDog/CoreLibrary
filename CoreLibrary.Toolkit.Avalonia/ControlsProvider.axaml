@@ -1,0 +1,11 @@
+<ResourceDictionary
+    x:Class="CoreLibrary.Toolkit.Avalonia.ControlsProvider"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="using:CoreLibrary.Toolkit.Avalonia.Controls">
+
+    <ResourceDictionary.MergedDictionaries>
+        <ResourceInclude Source="/Controls/CustomTitleBar.axaml" />
+        <ResourceInclude Source="/Controls/NavigationView.axaml" />
+    </ResourceDictionary.MergedDictionaries>
+</ResourceDictionary>

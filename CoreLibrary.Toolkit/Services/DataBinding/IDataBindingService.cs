@@ -10,38 +10,37 @@ using System.Threading.Tasks;
 using CoreLibrary.Toolkit.Services.DataBinding.Contracts;
 using CoreLibrary.Toolkit.Services.Setting;
 
-namespace CoreLibrary.Toolkit.Services.DataBinding
+namespace CoreLibrary.Toolkit.Services.DataBinding;
+
+public interface IDataBindingService
 {
-    public interface IDataBindingService
-    {
-        public static IDataBindingService Implement => new DataBindingService();
+    public static IDataBindingService Implement => new DataBindingService();
 
-        IDataBindingService Bind(
-            INotifyPropertyChanged source,
-            string sourceProperty,
-            object target,
-            string targetProperty,
-            IValueConverter? valueConverter = null
-        );
+    IDataBindingService Bind(
+        INotifyPropertyChanged source,
+        string sourceProperty,
+        object target,
+        string targetProperty,
+        IValueConverter? valueConverter = null
+    );
 
-        IDataBindingService UnBind(
-            INotifyPropertyChanged source,
-            string sourceProperty,
-            object target,
-            string targetProperty
-        );
+    IDataBindingService UnBind(
+        INotifyPropertyChanged source,
+        string sourceProperty,
+        object target,
+        string targetProperty
+    );
 
-        IDataBindingService BindCollection(
-            INotifyCollectionChanged collection,
-            Action<INotifyCollectionChanged, IList> itemsAdded,
-            Action<INotifyCollectionChanged, IList> itemsRemoved
-        );
+    IDataBindingService BindCollection(
+        INotifyCollectionChanged collection,
+        Action<INotifyCollectionChanged, IList> itemsAdded,
+        Action<INotifyCollectionChanged, IList> itemsRemoved
+    );
 
-        IDataBindingService UnBindCollection(INotifyCollectionChanged collection);
-        IDataBindingService UnBindCollection(
-            INotifyCollectionChanged collection,
-            Action<INotifyCollectionChanged, IList> itemsAdded,
-            Action<INotifyCollectionChanged, IList> itemsRemoved
-        );
-    }
+    IDataBindingService UnBindCollection(INotifyCollectionChanged collection);
+    IDataBindingService UnBindCollection(
+        INotifyCollectionChanged collection,
+        Action<INotifyCollectionChanged, IList> itemsAdded,
+        Action<INotifyCollectionChanged, IList> itemsRemoved
+    );
 }

@@ -19,25 +19,24 @@ using Windows.Foundation.Collections;
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
 
-namespace CoreServicesWinUILibrary.Views
+namespace CoreServicesWinUILibrary.Views;
+
+/// <summary>
+/// An empty page that can be used on its own or navigated to within a Frame.
+/// </summary>
+public sealed partial class SettingPage : Page
 {
-    /// <summary>
-    /// An empty page that can be used on its own or navigated to within a Frame.
-    /// </summary>
-    public sealed partial class SettingPage : Page
+    internal SettingViewModel ViewModel { get; } = App.GetService<SettingViewModel>();
+
+    public SettingPage()
     {
-        internal SettingViewModel ViewModel { get; } = App.GetService<SettingViewModel>();
-
-        public SettingPage()
-        {
-            this.InitializeComponent();
-        }
+        this.InitializeComponent();
     }
+}
 
-    public sealed class DefaultSettingValueConverter : IValueConverter
-    {
-        public object Convert(object value, Type targetType, object parameter, string language) => value;
+public sealed class DefaultSettingValueConverter : IValueConverter
+{
+    public object Convert(object value, Type targetType, object parameter, string language) => value;
 
-        public object ConvertBack(object value, Type targetType, object parameter, string language) => value;
-    }
+    public object ConvertBack(object value, Type targetType, object parameter, string language) => value;
 }

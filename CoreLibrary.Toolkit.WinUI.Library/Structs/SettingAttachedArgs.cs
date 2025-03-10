@@ -5,10 +5,9 @@ using System.Text;
 using System.Threading.Tasks;
 using CoreServices.Setting.Structs;
 
-namespace CoreServicesWinUILibrary.Structs
+namespace CoreServicesWinUILibrary.Structs;
+
+public sealed class SettingAttachedArgs(string iconGlyph) : AttachedArgs
 {
-    public sealed class SettingAttachedArgs(string iconGlyph) : AttachedArgs
-    {
-        public string IconGlyph { get; } = iconGlyph;
-    }
+    public string IconGlyph { get; } = iconGlyph;
 }

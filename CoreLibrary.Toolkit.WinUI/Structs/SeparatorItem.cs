@@ -5,7 +5,6 @@ using System.Text;
 using System.Threading.Tasks;
 using CoreLibrary.Toolkit.WinUI.Contracts;
 
-namespace CoreLibrary.Toolkit.WinUI.Structs
-{
-    public sealed record SeparatorItem : IPageItem { }
-}
+namespace CoreLibrary.Toolkit.WinUI.Structs;
+
+public sealed record SeparatorItem : IPageItem { }

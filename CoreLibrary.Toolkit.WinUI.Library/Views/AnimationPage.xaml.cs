@@ -26,38 +26,37 @@ using Windows.Foundation.Collections;
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
 
-namespace CoreServicesWinUILibrary.Views
+namespace CoreServicesWinUILibrary.Views;
+
+/// <summary>
+/// An empty page that can be used on its own or navigated to within a Frame.
+/// </summary>
+public sealed partial class AnimationPage : Page, INotifyPropertyChanged
 {
-    /// <summary>
-    /// An empty page that can be used on its own or navigated to within a Frame.
-    /// </summary>
-    public sealed partial class AnimationPage : Page, INotifyPropertyChanged
+    public event PropertyChangedEventHandler? PropertyChanged;
+
+    public int WindowWidth
     {
-        public event PropertyChangedEventHandler? PropertyChanged;
-
-        public int WindowWidth
+        get => MainWindow.Instance!.AppWindow.Size.Width;
+        set
         {
-            get => MainWindow.Instance!.AppWindow.Size.Width;
-            set
-            {
-                MainWindow.Instance!.AppWindow.Resize(MainWindow.Instance!.AppWindow.Size with { Width = value });
-                PropertyChanged?.Invoke(this, new(nameof(WindowWidth)));
-            }
+            MainWindow.Instance!.AppWindow.Resize(MainWindow.Instance!.AppWindow.Size with { Width = value });
+            PropertyChanged?.Invoke(this, new(nameof(WindowWidth)));
         }
+    }
 
-        public int WindowHeight
+    public int WindowHeight
+    {
+        get => MainWindow.Instance!.AppWindow.Size.Height;
+        set
         {
-            get => MainWindow.Instance!.AppWindow.Size.Height;
-            set
-            {
-                MainWindow.Instance!.AppWindow.Resize(MainWindow.Instance!.AppWindow.Size with { Height = value });
-                PropertyChanged?.Invoke(this, new(nameof(WindowHeight)));
-            }
+            MainWindow.Instance!.AppWindow.Resize(MainWindow.Instance!.AppWindow.Size with { Height = value });
+            PropertyChanged?.Invoke(this, new(nameof(WindowHeight)));
         }
+    }
 
-        public AnimationPage()
-        {
-            this.InitializeComponent();
-        }
+    public AnimationPage()
+    {
+        this.InitializeComponent();
     }
 }

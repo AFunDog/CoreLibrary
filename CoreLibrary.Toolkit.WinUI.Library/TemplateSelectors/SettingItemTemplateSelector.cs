@@ -9,24 +9,23 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Windows.Graphics.Display;
 
-namespace CoreServicesWinUILibrary.TemplateSelectors
-{
-    internal sealed class SettingItemTemplateSelector : DataTemplateSelector
-    {
-        public DataTemplate SettingCardTemplate { get; set; } = new();
-        public DataTemplate SettingExpanderTemplate { get; set; } = new();
+namespace CoreServicesWinUILibrary.TemplateSelectors;
 
-        protected override DataTemplate SelectTemplateCore(object item, DependencyObject container)
+internal sealed class SettingItemTemplateSelector : DataTemplateSelector
+{
+    public DataTemplate SettingCardTemplate { get; set; } = new();
+    public DataTemplate SettingExpanderTemplate { get; set; } = new();
+
+    protected override DataTemplate SelectTemplateCore(object item, DependencyObject container)
+    {
+        var settingNodeInfo = (item as SettingNodeInfo)!;
+        if (settingNodeInfo.Kids.Count > 0)
         {
-            var settingNodeInfo = (item as SettingNodeInfo)!;
-            if (settingNodeInfo.Kids.Count > 0)
-            {
-                return SettingExpanderTemplate;
-            }
-            else
-            {
-                return SettingCardTemplate;
-            }
+            return SettingExpanderTemplate;
+        }
+        else
+        {
+            return SettingCardTemplate;
         }
     }
 }

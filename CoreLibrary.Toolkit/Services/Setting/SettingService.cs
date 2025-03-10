@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Frozen;
 using System.Collections.Generic;
@@ -14,237 +14,67 @@ using System.Net.WebSockets;
 using System.Reflection.PortableExecutable;
 using System.Text;
 using System.Threading.Tasks;
-using CoreLibrary.Core.BasicObjects;
+using CoreLibrary.Core.Contacts;
 using CoreLibrary.Toolkit.Services.Setting.Structs;
 using MessagePack;
 
 namespace CoreLibrary.Toolkit.Services.Setting;
 
-public sealed class SettingsBuilder
-{
-    // 配置项目 Key 不能包含这个字符
-    const char PathSeparator = '.';
-
-    private readonly string _key;
-    private readonly List<SettingNode> _nodes = [];
-
-    public SettingsBuilder(string key = "")
-    {
-        _key = key;
-    }
-
-    public SettingsBuilder ConfigSetting(SettingConfig settingConfig)
-    {
-        if (settingConfig.Key.Contains(PathSeparator))
-            return this;
-
-        _nodes.Add(new SettingConfigNode(settingConfig));
-        return this;
-    }
-
-    public SettingsBuilder ConfigSettings(string key, Action<SettingsBuilder> childrenBuilder)
-    {
-        if (key.Contains(PathSeparator))
-            return this;
-
-        var children = new SettingsBuilder(key);
-        childrenBuilder(children);
-        _nodes.Add(children.BuildSettings());
-        return this;
-    }
-
-    public SettingCollectionNode BuildSettings()
-    {
-        return new SettingCollectionNode(_key, _nodes.ToDictionary(node => node.Key));
-    }
-}
-
 internal sealed class SettingService : DisposableObject, ISettingService
 {
-    private SettingCollectionNode? _settings;
+    private Dictionary<string, object?> Properties { get; } = [];
 
-    //public event Action<ISettingService, SettingValueChangeEventArgs>? SettingValueChanged;
-
-    public SettingCollectionNode Settings =>
-        _settings ?? throw new InvalidOperationException($"设置服务未初始化，请先调用 {nameof(BuildSettings)}");
-
-    public void BuildSettings(Action<SettingsBuilder> builder)
+    public void RegisterModel(Type modelType)
     {
-        var settingBuilder = new SettingsBuilder();
-        builder(settingBuilder);
-        _settings = settingBuilder.BuildSettings();
-    }
-
-    public void SetSettingValue<T>(string key, T value)
-        where T : notnull
-    {
-        if (GetSettingConfig(key) is SettingConfig config)
+        var properties = modelType
+            .GetFields(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static)
+            .Where(field => field.FieldType.IsSubclassOf(typeof(SettingProperty)))
+            .Select(filed => (SettingProperty)filed.GetValue(null)!);
+        foreach (var property in properties)
         {
-            config.SettingValue.Value = value;
-            config.SettingValue.ApplyChange();
+            if (Properties.ContainsKey(property.Token) is false)
+                Properties.Add(property.Token, property.DefValue);
         }
     }
 
-    public SettingValue? GetSettingValue(string key)
+    public T GetValue<T>(SettingProperty<T> property)
     {
-        return GetSettingConfig(key)?.SettingValue;
-    }
-
-    public T? GetSettingValue<T>(string key)
-    {
-        if (GetSettingValue(key) is SettingValue settingValue && settingValue.Value is T value)
+        if (Properties.TryGetValue(property.Token, out var value))
         {
-            return value;
+            return (T)value!;
         }
-        return default;
+        return (T)property.DefValue!;
     }
 
-    public void SaveSettings(string filePath)
+    public void SetValue<T>(SettingProperty<T> property, T value)
     {
-        var dirPath = Path.GetDirectoryName(filePath);
-        if (!string.IsNullOrEmpty(dirPath) && !Directory.Exists(dirPath))
-            Directory.CreateDirectory(dirPath);
-        if (!File.Exists(filePath))
-            File.Create(filePath).Close();
-
-        var settingDatas = CollectToRecord();
-
-        File.WriteAllBytes(filePath, MessagePackSerializer.Serialize(settingDatas));
+        Properties[property.Token] = value;
     }
 
-    public async Task SaveSettingsAsync(string filePath, CancellationToken cancellationToken = default)
+    public void SaveData(string filePath)
     {
-        if (!Directory.Exists(Path.GetDirectoryName(filePath)))
-            Directory.CreateDirectory(Path.GetDirectoryName(filePath)!);
-        using FileStream fileStream = new(filePath, FileMode.OpenOrCreate);
-        var settingDatas = CollectToRecord();
-        await MessagePackSerializer.SerializeAsync(fileStream, settingDatas, cancellationToken: cancellationToken);
-    }
-
-    public void ReadSettings(string filePath)
-    {
-        if (!File.Exists(filePath))
-            return;
-
-        try
-        {
-            foreach (
-                var settingData in MessagePackSerializer.Deserialize<IEnumerable<SettingRecord>>(
-                    File.ReadAllBytes(filePath)
-                )
-            )
-            {
-                if (GetSettingConfig(settingData.Key) is SettingConfig config)
-                {
-                    config.SettingValue.InitValue(settingData.Value);
-                }
-            }
-        }
-        catch (Exception e)
-        {
-            Debug.WriteLine(e);
-        }
-    }
-
-    public async Task ReadSettingsAsync(string filePath, CancellationToken cancellationToken = default)
-    {
-        if (!File.Exists(filePath))
-            return;
-
-        await Task.Run(
-            async () =>
-            {
-                try
-                {
-                    using FileStream fs = File.OpenRead(filePath);
-                    foreach (
-                        var settingData in await MessagePackSerializer.DeserializeAsync<IEnumerable<SettingRecord>>(
-                            fs,
-                            cancellationToken: cancellationToken
-                        )
-                    )
-                    {
-                        if (GetSettingConfig(settingData.Key) is SettingConfig config)
-                        {
-                            config.SettingValue.InitValue(settingData.Value);
-                        }
-                    }
-                }
-                catch (Exception e)
-                {
-                    Debug.WriteLine(e);
-                }
-            },
-            cancellationToken
+        using var fs = new FileStream(filePath, FileMode.OpenOrCreate, FileAccess.Write);
+        MessagePackSerializer.Serialize(
+            fs,
+            Properties.Select(tokenAndValue => new SettingData(tokenAndValue.Key, tokenAndValue.Value)),
+            MessagePack.Resolvers.ContractlessStandardResolverAllowPrivate.Options
         );
     }
 
-    public void TryExecuteAllCommands()
+    public void LoadData(string filePath)
     {
-        Settings.ForEach(node =>
+        using var fs = new FileStream(filePath, FileMode.Open, FileAccess.Read);
+        var datas = MessagePackSerializer.Deserialize<IEnumerable<SettingData>>(
+            fs,
+            MessagePack.Resolvers.ContractlessStandardResolverAllowPrivate.Options
+        );
+        foreach (var data in datas)
         {
-            if (node is SettingConfigNode configNode)
-            {
-                configNode.Config.SettingValue.ApplyChange();
-            }
-        });
-    }
-
-    private SettingConfig? GetSettingConfig(string key)
-    {
-        string[] path = key.Split('.');
-        var root = Settings;
-        for (int i = 0; i < path.Length - 1; i++)
-        {
-            if (root.Values.TryGetValue(path[i], out var node) && node is SettingCollectionNode child)
-            {
-                root = child;
-            }
-            else
-            {
-                return null;
-            }
-        }
-        if (root.Values.TryGetValue(path[^1], out var value) && value is SettingConfigNode configNode)
-        {
-            return configNode.Config;
-        }
-
-        return null;
-    }
-
-    private IEnumerable<SettingRecord> CollectToRecord()
-    {
-        List<SettingRecord> records = [];
-
-        SettingCollectionNodeToRecords("", Settings);
-
-        return records;
-
-        void SettingCollectionNodeToRecords(string path, SettingCollectionNode collectionNode)
-        {
-            foreach ((var key, var settingNode) in collectionNode.Values)
-            {
-                var curPath = string.IsNullOrEmpty(path) ? key : string.Format("{0}.{1}", path, key);
-                switch (settingNode)
-                {
-                    case SettingConfigNode configNode:
-                        records.Add(new(curPath, configNode.Config.SettingValue.Value));
-                        break;
-                    case SettingCollectionNode children:
-                        SettingCollectionNodeToRecords(curPath, children);
-                        break;
-                    default:
-                        break;
-                }
-            }
+            Properties[data.Token] = data.Value;
         }
     }
 
-    protected override void DisposeManagedResource()
-    {
-        _settings = null;
-    }
+    protected override void DisposeManagedResource() { }
 
     protected override void DisposeUnmanagedResource() { }
 

@@ -16,13 +16,12 @@ using Windows.Foundation.Collections;
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
 
-namespace CoreLibrary.Toolkit.WinUI.Templates
+namespace CoreLibrary.Toolkit.WinUI.Templates;
+
+public sealed partial class SeparatorItemTemplate : DataTemplate
 {
-    public sealed partial class SeparatorItemTemplate : DataTemplate
+    public SeparatorItemTemplate()
     {
-        public SeparatorItemTemplate()
-        {
-            this.InitializeComponent();
-        }
+        this.InitializeComponent();
     }
 }

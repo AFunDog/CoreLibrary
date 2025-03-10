@@ -5,10 +5,9 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.UI.Xaml.Media.Animation;
 
-namespace CoreLibrary.Toolkit.WinUI.Contracts
+namespace CoreLibrary.Toolkit.WinUI.Contracts;
+
+public interface INavigateTransitionSelector
 {
-    public interface INavigateTransitionSelector
-    {
-        NavigationTransitionInfo? GetTransition(Type targetPageType);
-    }
+    NavigationTransitionInfo? GetTransition(Type targetPageType);
 }

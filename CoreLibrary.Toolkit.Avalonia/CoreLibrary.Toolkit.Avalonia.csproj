@@ -1,0 +1,43 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+	<PropertyGroup>
+		<TargetFramework>net8.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<GenerateDocumentationFile>true</GenerateDocumentationFile>
+		<Authors>ZengKun</Authors>
+		<Version>1.0.1</Version>
+		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+		<PackageIcon>小图标.jpg</PackageIcon>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
+		<PackageOutputPath>D:\NugetLib\CoreLibrary.Toolkit.Avalonia\</PackageOutputPath>
+	</PropertyGroup>
+	
+	<ItemGroup>
+		<None Include="C:\Users\Zeng\UserData\小图标.jpg">
+			<Pack>True</Pack>
+			<PackagePath>\</PackagePath>
+		</None>
+	</ItemGroup>
+	<ItemGroup>
+		<None Update="README.md">
+			<Pack>True</Pack>
+			<PackagePath>\</PackagePath>
+		</None>
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Avalonia" Version="11.2.5" />
+		<PackageReference Include="Avalonia.Desktop" Version="11.2.5" />
+		<PackageReference Include="Avalonia.Themes.Fluent" Version="11.2.5" />
+		<PackageReference Include="Avalonia.Fonts.Inter" Version="11.2.5" />
+		<!--Condition below is needed to remove Avalonia.Diagnostics package from build output in Release configuration.-->
+		<PackageReference Include="Avalonia.Diagnostics" Version="11.2.5">
+			<IncludeAssets Condition="'$(Configuration)' != 'Debug'">None</IncludeAssets>
+			<PrivateAssets Condition="'$(Configuration)' != 'Debug'">All</PrivateAssets>
+		</PackageReference>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\CoreLibrary.Toolkit\CoreLibrary.Toolkit.csproj" />
+	</ItemGroup>
+</Project>
