@@ -101,7 +101,7 @@
                                                     Height="24"
                                                     HorizontalAlignment="Center"
                                                     IsVisible="{Binding !UseFontIcon}"
-                                                    Source="{Binding Icon}"
+                                                    Source="{Binding Icon, Mode=OneWay}"
                                                     Stretch="Uniform" />
                                                 <TextBlock
                                                     Width="{DynamicResource NaviagtionNormalPanelWidth}"
@@ -119,7 +119,7 @@
                                                     VerticalAlignment="Center"
                                                     Classes="MenuItemTitle"
                                                     FontSize="16"
-                                                    Text="{Binding Title}"
+                                                    Text="{Binding Title, Mode=OneWay}"
                                                     TextAlignment="Left">
                                                     <TextBlock.Transitions>
                                                         <Transitions>

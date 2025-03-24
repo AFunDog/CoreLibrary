@@ -14,25 +14,56 @@ namespace CoreLibrary.Toolkit.Avalonia.Structs;
 /// </summary>
 public sealed partial class MenuItemData : ObservableObject, IDisposable
 {
+    private string _title = string.Empty;
+
     /// <summary>
     /// 标题
     /// </summary>
-    public string Title { get; }
+    public string Title
+    {
+        get => _title;
+        set => SetProperty(ref _title, value);
+    }
+
+    private Bitmap? _icon;
 
     /// <summary>
     /// 图标
     /// </summary>
-    public Bitmap? Icon { get; }
+    public Bitmap? Icon
+    {
+        get => _icon;
+        set => SetProperty(ref _icon, value);
+    }
+
+    private char? _glyph;
 
     /// <summary>
     /// 字符图标
     /// </summary>
-    public char? Glyph { get; }
+    public char? Glyph
+    {
+        get => _glyph;
+        set
+        {
+            if (SetProperty(ref _glyph, value))
+            {
+                OnPropertyChanged(nameof(GlyphString));
+                OnPropertyChanged(nameof(UseFontIcon));
+            }
+        }
+    }
+
+    private object? _tag;
 
     /// <summary>
     /// 额外数据
     /// </summary>
-    public object? Tag { get; }
+    public object? Tag
+    {
+        get => _tag;
+        set => SetProperty(ref _tag, value);
+    }
 
     private bool _isSelected;
     internal bool IsSelected

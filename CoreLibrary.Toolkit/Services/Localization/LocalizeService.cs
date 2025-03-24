@@ -15,13 +15,15 @@ using Serilog;
 
 namespace CoreLibrary.Toolkit.Services.Localization;
 
+// TODO 改为可以接收多个本地化数据提供者
+
 internal sealed class LocalizeService : DisposableObject, ILocalizeService
 {
     private Dictionary<CultureInfo, Dictionary<string, string>> LocalizationTable { get; } = [];
 
     private ILogger Logger { get; }
 
-    private IDataProvider<LocalizationData> DataProvider { get; }
+    private IDataProvider<LocalizationData>[] DataProviders { get; }
 
     private CultureInfo _currentCulture = CultureInfo.CurrentCulture;
     public CultureInfo LocalizeCulture
@@ -63,17 +65,25 @@ internal sealed class LocalizeService : DisposableObject, ILocalizeService
         : this(Log.Logger) { }
 
     public LocalizeService(ILogger logger)
-        : this(logger, IDataProvider<LocalizationData>.Empty) { }
+        : this(logger, []) { }
 
-    public LocalizeService(ILogger logger, IDataProvider<LocalizationData> dataProvider)
+    public LocalizeService(ILogger logger, IEnumerable<IDataProvider<LocalizationData>> dataProviders)
     {
         Logger = logger;
-        DataProvider = dataProvider;
+        DataProviders = [.. dataProviders];
 
-        DataProvider.LoadData();
+        foreach (var dataProvider in DataProviders)
+        {
+            dataProvider.LoadData();
+        }
         LoadLocalization();
 
-        DataProvider.DataChanged += OnDataProviderDataChanged;
+        foreach (var dataProvider in DataProviders)
+        {
+            dataProvider.DataChanged += OnDataProviderDataChanged;
+        }
+
+        //DataProviders.DataChanged += OnDataProviderDataChanged;
     }
 
     private void OnDataProviderDataChanged(IDataProvider<LocalizationData> provider)
@@ -100,15 +110,18 @@ internal sealed class LocalizeService : DisposableObject, ILocalizeService
 
     private void LoadLocalization()
     {
-        foreach (var data in DataProvider.Datas)
+        foreach (var dataProvider in DataProviders)
         {
-            if (LocalizationTable.TryGetValue(data.CultureInfo, out var dict))
+            foreach (var data in dataProvider.Datas)
             {
-                dict[data.Key] = data.Value;
-            }
-            else
-            {
-                LocalizationTable[data.CultureInfo] = new() { [data.Key] = data.Value };
+                if (LocalizationTable.TryGetValue(data.CultureInfo, out var dict))
+                {
+                    dict[data.Key] = data.Value;
+                }
+                else
+                {
+                    LocalizationTable[data.CultureInfo] = new() { [data.Key] = data.Value };
+                }
             }
         }
     }

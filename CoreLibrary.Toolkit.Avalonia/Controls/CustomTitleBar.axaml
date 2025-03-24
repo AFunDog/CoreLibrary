@@ -32,9 +32,10 @@
                             <Setter Property="Margin" Value="0" />
                         </Style>
                         <!--  Avalonia 窗口全屏时，边框会被遮挡一部分，所以主动扩大边框  -->
-                        <Style Selector="controls|CustomTitleBar:maximized Grid.Base">
+						<!-- 将窗口 SystemD... 调味 -->
+                        <!--<Style Selector="controls|CustomTitleBar:maximized Grid.Base">
                             <Setter Property="Margin" Value="4,8,4,0" />
-                        </Style>
+                        </Style>-->
                     </Grid.Styles>
                     <StackPanel
                         Margin="16,0,0,0"

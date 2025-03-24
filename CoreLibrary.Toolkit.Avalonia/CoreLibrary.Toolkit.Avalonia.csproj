@@ -6,6 +6,7 @@
 		<GenerateDocumentationFile>true</GenerateDocumentationFile>
 		<Authors>ZengKun</Authors>
 		<Version>1.0.1</Version>
+		<AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
 		<PackageIcon>小图标.jpg</PackageIcon>
 		<PackageReadmeFile>README.md</PackageReadmeFile>

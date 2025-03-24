@@ -13,7 +13,7 @@ internal sealed class NavigateService : INavigateService
 {
     private ILogger Logger { get; }
 
-    public event Action<INavigateService, object>? OnNavigated;
+    public event Action<INavigateService, object?>? OnNavigated;
 
     private Dictionary<string, Func<object>> RouteTable { get; } = [];
 
@@ -50,10 +50,13 @@ internal sealed class NavigateService : INavigateService
             return;
         CurrentRoute = route;
         var view = GetRouteView();
-        if (view is not null)
-        {
-            OnNavigated?.Invoke(this, view);
-        }
+        OnNavigated?.Invoke(this, view);
+    }
+
+    public void ForceRefresh()
+    {
+        var view = GetRouteView();
+        OnNavigated?.Invoke(this, view);
     }
 
     private object? GetRouteView()

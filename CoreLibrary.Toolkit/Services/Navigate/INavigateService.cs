@@ -10,7 +10,7 @@ public interface INavigateService
     /// <summary>
     /// 当导航发生时触发
     /// </summary>
-    event Action<INavigateService, object>? OnNavigated;
+    event Action<INavigateService, object?>? OnNavigated;
 
     /// <summary>
     /// 取消绑定所有的导航事件
@@ -39,8 +39,19 @@ public interface INavigateService
     /// <summary>
     /// 导航到指定路由
     /// </summary>
+    /// <remarks>
+    /// 若路由发生变化则触发 <see cref="OnNavigated"/> 事件
+    /// </remarks>
     /// <param name="route"></param>
     void Navigate(string route);
+
+    /// <summary>
+    /// 强制刷新
+    /// </summary>
+    /// <remarks>
+    /// 会触发 <see cref="OnNavigated"/> 事件
+    /// </remarks>
+    void ForceRefresh();
 
     /// <summary>
     /// 当前路由
@@ -65,6 +76,8 @@ public interface INavigateService
             where T : class => this;
 
         public void Navigate(string route) { }
+
+        public void ForceRefresh() { }
 
         public void Unbind() { }
     }
