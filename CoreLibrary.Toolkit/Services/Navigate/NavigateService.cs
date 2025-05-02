@@ -1,13 +1,6 @@
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Serilog;
 
-namespace CoreLibrary.Toolkit.Services.Navigate;
+namespace Zeng.CoreLibrary.Toolkit.Services.Navigate;
 
 internal sealed class NavigateService : INavigateService
 {

@@ -1,16 +1,9 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections;
 using System.Collections.Specialized;
 using System.ComponentModel;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
-using CoreLibrary.Toolkit.Services.DataBinding.Contracts;
-using CoreLibrary.Toolkit.Services.Setting;
+using Zeng.CoreLibrary.Toolkit.Services.DataBinding.Contracts;
 
-namespace CoreLibrary.Toolkit.Services.DataBinding;
+namespace Zeng.CoreLibrary.Toolkit.Services.DataBinding;
 
 public interface IDataBindingService
 {

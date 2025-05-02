@@ -1,4 +1,4 @@
-﻿namespace CoreLibrary.Toolkit.ExecuteChain.Internals;
+﻿namespace Zeng.CoreLibrary.Toolkit.ExecuteChain.Internals;
 
 internal sealed record ExecuteChainGroup(
     List<ExecuteChainStep> Steps,

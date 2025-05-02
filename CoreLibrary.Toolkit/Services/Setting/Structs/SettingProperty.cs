@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace CoreLibrary.Toolkit.Services.Setting.Structs;
+﻿namespace Zeng.CoreLibrary.Toolkit.Services.Setting.Structs;
 
 public class SettingProperty
 {

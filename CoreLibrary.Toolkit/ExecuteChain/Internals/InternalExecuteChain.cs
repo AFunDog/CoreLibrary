@@ -1,15 +1,9 @@
-using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using CoreLibrary.Core.Contacts;
-using CoreLibrary.Toolkit.ExecuteChain.EventArgs;
 using Microsoft.VisualStudio.Threading;
+using Zeng.CoreLibrary.Core.Contacts;
+using Zeng.CoreLibrary.Toolkit.ExecuteChain.EventArgs;
 
-namespace CoreLibrary.Toolkit.ExecuteChain.Internals;
+namespace Zeng.CoreLibrary.Toolkit.ExecuteChain.Internals;
 
 internal class InternalExecuteChain : DisposableObject, IExecuteChain
 {

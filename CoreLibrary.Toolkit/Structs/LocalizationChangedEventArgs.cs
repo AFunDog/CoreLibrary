@@ -1,10 +1,4 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace CoreLibrary.Toolkit.Structs;
+namespace Zeng.CoreLibrary.Toolkit.Structs;
 
 public sealed class LocalizationChangedEventArgs : EventArgs
 {

@@ -1,24 +1,8 @@
-using System;
-using System.Collections.Concurrent;
-using System.Collections.Frozen;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
-using System.Globalization;
-using System.IO;
-using System.IO.Pipes;
-using System.Linq;
-using System.Net.WebSockets;
-using System.Reflection.PortableExecutable;
-using System.Text;
-using System.Threading.Tasks;
-using CoreLibrary.Core.Contacts;
-using CoreLibrary.Toolkit.Services.Setting.Structs;
 using MessagePack;
+using Zeng.CoreLibrary.Core.Contacts;
+using Zeng.CoreLibrary.Toolkit.Services.Setting.Structs;
 
-namespace CoreLibrary.Toolkit.Services.Setting;
+namespace Zeng.CoreLibrary.Toolkit.Services.Setting;
 
 internal sealed class SettingService : DisposableObject, ISettingService
 {

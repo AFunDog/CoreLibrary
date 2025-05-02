@@ -1,4 +1,6 @@
-﻿namespace CoreLibrary.Toolkit.ExecuteChain;
+﻿using Zeng.CoreLibrary.Toolkit.ExecuteChain.Configs;
+
+namespace Zeng.CoreLibrary.Toolkit.ExecuteChain;
 
 public static class ExecuteChainBuilder
 {

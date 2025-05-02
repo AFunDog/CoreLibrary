@@ -1,19 +1,13 @@
-using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Data;
 using Avalonia.Data.Core;
 using Avalonia.Markup.Xaml.MarkupExtensions;
 using Avalonia.Markup.Xaml.MarkupExtensions.CompiledBindings;
-using CoreLibrary.Toolkit.Services.Localization;
-using CoreLibrary.Toolkit.Structs;
+using Zeng.CoreLibrary.Toolkit.Services.Localization;
+using Zeng.CoreLibrary.Toolkit.Structs;
 
-namespace CoreLibrary.Toolkit.Avalonia.Extensions;
+namespace Zeng.CoreLibrary.Toolkit.Avalonia.Extensions;
 
 public sealed class LocalizeExtension
 {

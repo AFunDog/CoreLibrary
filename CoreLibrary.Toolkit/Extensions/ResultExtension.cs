@@ -1,11 +1,6 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using CoreLibrary.Core.Structs;
+using Zeng.CoreLibrary.Core.Structs;
 
-namespace CoreLibrary.Toolkit.Extensions;
+namespace Zeng.CoreLibrary.Toolkit.Extensions;
 
 public static class ResultExtension
 {

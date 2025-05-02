@@ -1,9 +1,9 @@
 <ResourceDictionary
     xmlns="https://github.com/avaloniaui"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:controls="using:CoreLibrary.Toolkit.Avalonia.Controls"
-    xmlns:structs="using:CoreLibrary.Toolkit.Avalonia.Structs"
-    xmlns:sys="using:System">
+    xmlns:sys="using:System"
+    xmlns:controls="clr-namespace:Zeng.CoreLibrary.Toolkit.Avalonia.Controls"
+    xmlns:structs="clr-namespace:Zeng.CoreLibrary.Toolkit.Avalonia.Structs">
 
     <Design.PreviewWith>
         <Grid Width="400" Height="300">
@@ -11,7 +11,9 @@
         </Grid>
     </Design.PreviewWith>
 
-    <sys:Double x:Key="NaviagtionNormalPanelWidth">48</sys:Double>
+    <sys:Double x:Key="NavigationNormalPanelWidth">48</sys:Double>
+    <sys:Double x:Key="NavigationMenuItemHeight">40</sys:Double>
+    <sys:Double x:Key="NavigationMenuItemIconFontSize">18</sys:Double>
     <ControlTheme x:Key="{x:Type controls:NavigationView}" TargetType="controls:NavigationView">
         <Style Selector="^ /template/ :is(Control)#PART_MenuPanel">
             <Setter Property="Transitions">
@@ -26,37 +28,36 @@
             </Setter>
         </Style>
         <Style Selector="^[IsMenuOpen=false] /template/ :is(Control)#PART_MenuPanel">
-            <Setter Property="Width" Value="{StaticResource NaviagtionNormalPanelWidth}" />
+            <Setter Property="Width" Value="{StaticResource NavigationNormalPanelWidth}" />
         </Style>
         <Style Selector="^[IsMenuOpen=true] /template/ :is(Control)#PART_MenuPanel">
             <Setter Property="Width" Value="{TemplateBinding MenuPanelExpandedWidth}" />
         </Style>
+        <Setter Property="Background" Value="{DynamicResource SystemChromeMediumLowColor}" />
         <Setter Property="Template">
             <ControlTemplate>
                 <Grid ColumnDefinitions="auto,*">
                     <Grid.Styles>
-                        <Style Selector="Button.MenuItem">
+                        <Style Selector=":is(TemplatedControl).MenuItem">
+                            <Setter Property="Height" Value="{DynamicResource NavigationMenuItemHeight}" />
                             <Setter Property="Padding" Value="0,4,0,4" />
-                            <Setter Property="Margin" Value="0" />
-                            <Setter Property="Height" Value="48" />
+                            <Setter Property="Margin" Value="4,2" />
+                            <Setter Property="CornerRadius" Value="4"></Setter>
                         </Style>
                     </Grid.Styles>
                     <!--  菜单项目栏  -->
-                    <Grid Name="PART_MenuPanel" RowDefinitions="auto,*">
-                        <Grid.Background>
-                            <SolidColorBrush Opacity="0.1" Color="{DynamicResource SystemBaseHighColor}" />
-                        </Grid.Background>
+                    <Grid Name="PART_MenuPanel" RowDefinitions="auto,*" Background="{TemplateBinding Background}">
                         <Button
                             HorizontalAlignment="Stretch"
                             Background="Transparent"
                             Classes="MenuItem"
                             Command="{TemplateBinding MenuTopButtonCommand}">
                             <TextBlock
-                                Width="{DynamicResource NaviagtionNormalPanelWidth}"
+                                Width="40"
                                 HorizontalAlignment="Left"
                                 VerticalAlignment="Center"
                                 FontFamily="Segoe Fluent Icons"
-                                FontSize="20"
+                                FontSize="18"
                                 Text="&#xE700;"
                                 TextAlignment="Center" />
                         </Button>
@@ -65,6 +66,7 @@
                                 <Style Selector="controls|NavigationView[IsMenuOpen=false] TextBlock.MenuItemTitle">
                                     <Setter Property="Opacity" Value="0" />
                                 </Style>
+
                             </ScrollViewer.Styles>
                             <ItemsControl ItemsSource="{TemplateBinding MenuItemSource}">
                                 <ItemsControl.ItemsPanel>
@@ -86,35 +88,47 @@
                                             <Button.Styles>
                                                 <Style Selector="Button.MenuItem">
                                                     <Setter Property="Background" Value="Transparent" />
+                                                    <Style Selector="^ :is(Control).LeftSign">
+                                                        <Setter Property="IsVisible" Value="False"></Setter>
+                                                    </Style>
                                                 </Style>
 
                                                 <Style Selector="Button.MenuItem.Selected">
                                                     <Setter Property="Background" Value="{DynamicResource ButtonBackgroundPointerOver}" />
+                                                    <Style Selector="^ :is(Control).LeftSign">
+                                                        <Setter Property="IsVisible" Value="True"></Setter>
+                                                    </Style>
                                                 </Style>
+
                                             </Button.Styles>
                                             <Grid
                                                 HorizontalAlignment="Stretch"
-                                                Classes="MenuItemContainer"
-                                                ColumnDefinitions="auto,*">
+                                                Classes="MenuItemContainer" ColumnDefinitions="40,*">
+                                                <!-- 选中指示标记 -->
+                                                <Border Width="4" CornerRadius="4" HorizontalAlignment="Left" Margin="0,4" Grid.Column="0"
+                                                        Classes="LeftSign"
+                                                        Background="{DynamicResource SystemControlHighlightAccentRevealBackgroundBrush}" />
+                                                <!-- 图像图标 -->
                                                 <Image
-                                                    Width="{StaticResource NaviagtionNormalPanelWidth}"
+                                                    Grid.Column="0"
                                                     Height="24"
                                                     HorizontalAlignment="Center"
                                                     IsVisible="{Binding !UseFontIcon}"
                                                     Source="{Binding Icon, Mode=OneWay}"
                                                     Stretch="Uniform" />
+                                                <!-- 字符图标 -->
                                                 <TextBlock
-                                                    Width="{DynamicResource NaviagtionNormalPanelWidth}"
-                                                    HorizontalAlignment="Center"
+                                                    Grid.Column="0" HorizontalAlignment="Center"
                                                     VerticalAlignment="Center"
                                                     FontFamily="Segoe Fluent Icons"
-                                                    FontSize="20"
+                                                    FontSize="18"
                                                     IsVisible="{Binding UseFontIcon}"
                                                     Text="{Binding GlyphString}"
                                                     TextAlignment="Center" />
+                                                <!-- 标题 -->
                                                 <TextBlock
                                                     Grid.Column="1"
-                                                    Margin="16,0,0,0"
+                                                    Margin="0,0,0,0"
                                                     HorizontalAlignment="Stretch"
                                                     VerticalAlignment="Center"
                                                     Classes="MenuItemTitle"
@@ -136,7 +150,7 @@
                     </Grid>
                     <!--  视图展示控件 并实现了页面切换效果  -->
                     <ScrollViewer Grid.Column="1">
-                        <TransitioningContentControl Name="PART_ViewPresenter" Content="{TemplateBinding Content}">
+                        <TransitioningContentControl CornerRadius="{TemplateBinding CornerRadius}" Name="PART_ViewPresenter" Content="{TemplateBinding Content}">
                             <TransitioningContentControl.PageTransition>
                                 <CompositePageTransition>
                                     <!--<CrossFade Duration="0:0:0.16" />-->

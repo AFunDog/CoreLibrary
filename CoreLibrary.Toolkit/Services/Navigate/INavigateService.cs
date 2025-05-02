@@ -1,6 +1,4 @@
-using System;
-
-namespace CoreLibrary.Toolkit.Services.Navigate;
+namespace Zeng.CoreLibrary.Toolkit.Services.Navigate;
 
 /// <summary>
 /// 导航功能服务

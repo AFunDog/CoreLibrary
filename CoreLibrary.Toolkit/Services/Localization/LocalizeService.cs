@@ -1,19 +1,10 @@
-using System;
-using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using CommunityToolkit.Mvvm.ComponentModel;
-using CoreLibrary.Core.Contacts;
-using CoreLibrary.Toolkit.Avalonia.Structs;
-using CoreLibrary.Toolkit.Contacts;
-using CoreLibrary.Toolkit.Structs;
 using Serilog;
+using Zeng.CoreLibrary.Core.Contacts;
+using Zeng.CoreLibrary.Toolkit.Contacts;
+using Zeng.CoreLibrary.Toolkit.Structs;
 
-namespace CoreLibrary.Toolkit.Services.Localization;
+namespace Zeng.CoreLibrary.Toolkit.Services.Localization;
 
 // TODO 改为可以接收多个本地化数据提供者
 

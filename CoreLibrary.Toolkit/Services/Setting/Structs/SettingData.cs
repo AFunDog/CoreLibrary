@@ -1,12 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using MessagePack;
+﻿using MessagePack;
 using MessagePack.Formatters;
 
-namespace CoreLibrary.Toolkit.Services.Setting.Structs;
+namespace Zeng.CoreLibrary.Toolkit.Services.Setting.Structs;
 
 internal readonly record struct SettingData(
     string Token,

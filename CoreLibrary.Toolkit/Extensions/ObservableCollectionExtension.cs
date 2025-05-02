@@ -1,6 +1,6 @@
 using System.Collections.ObjectModel;
 
-namespace CoreLibrary.Toolkit.Extensions;
+namespace Zeng.CoreLibrary.Toolkit.Extensions;
 
 public static class ObservableCollectionExtension
 {

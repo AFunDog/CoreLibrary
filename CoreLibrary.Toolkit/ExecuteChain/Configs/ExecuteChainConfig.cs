@@ -1,7 +1,7 @@
-﻿using CoreLibrary.Toolkit.ExecuteChain.EventArgs;
-using CoreLibrary.Toolkit.ExecuteChain.Internals;
+﻿using Zeng.CoreLibrary.Toolkit.ExecuteChain.EventArgs;
+using Zeng.CoreLibrary.Toolkit.ExecuteChain.Internals;
 
-namespace CoreLibrary.Toolkit.ExecuteChain;
+namespace Zeng.CoreLibrary.Toolkit.ExecuteChain.Configs;
 
 public sealed class ExecuteChainConfig
 {

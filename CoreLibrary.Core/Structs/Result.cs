@@ -1,33 +1,27 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace CoreLibrary.Core.Structs;
+namespace Zeng.CoreLibrary.Core.Structs;
 
 /// <summary>
 /// 执行结果 用于函数返回值
 /// </summary>
-/// <typeparam name="T">正确时返回值类型</typeparam>
-/// <typeparam name="E">错误时返回值类型</typeparam>
-public abstract class Result<T, E> { }
+/// <typeparam name="TR">正确时返回值类型</typeparam>
+/// <typeparam name="TE">错误时返回值类型</typeparam>
+public abstract class Result<TR, TE> { }
 
-public sealed class Success<T, E> : Result<T, E>
+public sealed class Success<TR, TE> : Result<TR, TE>
 {
-    public T Value { get; }
+    public TR Value { get; }
 
-    public Success(T value)
+    public Success(TR value)
     {
         Value = value;
     }
 }
 
-public sealed class Error<T, E> : Result<T, E>
+public sealed class Error<TR, TE> : Result<TR, TE>
 {
-    public E Value { get; }
+    public TE Value { get; }
 
-    public Error(E value)
+    public Error(TE value)
     {
         Value = value;
     }

@@ -1,10 +1,4 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace CoreLibrary.Core.Structs;
+namespace Zeng.CoreLibrary.Core.Structs;
 
 [Obsolete("用 Result 替代这种不强制性的结果")]
 public enum ResultType

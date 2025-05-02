@@ -1,16 +1,12 @@
-using System.Windows.Input;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Metadata;
 using Avalonia.Controls.Primitives;
-using Avalonia.Controls.Templates;
 using Avalonia.Input;
-using Avalonia.Interactivity;
 using Avalonia.LogicalTree;
 using Avalonia.Metadata;
-using CommunityToolkit.Mvvm.Input;
 
-namespace CoreLibrary.Toolkit.Avalonia.Controls;
+namespace Zeng.CoreLibrary.Toolkit.Avalonia.Controls;
 
 [TemplatePart("PART_Maximize", typeof(Button))]
 [TemplatePart("PART_Minimize", typeof(Button))]
@@ -39,26 +35,7 @@ public class CustomTitleBar : TemplatedControl
         get => GetValue(MiddleContentProperty);
         set => SetValue(MiddleContentProperty, value);
     }
-
-    #region Command
-
-
-    public static readonly DirectProperty<CustomTitleBar, ICommand> MinimizeCommandProperty =
-        AvaloniaProperty.RegisterDirect<CustomTitleBar, ICommand>(nameof(MinimizeCommand), o => o.MinimizeCommand);
-
-    public ICommand MinimizeCommand { get; }
-
-    public static readonly DirectProperty<CustomTitleBar, ICommand> MaximizeCommandProperty =
-        AvaloniaProperty.RegisterDirect<CustomTitleBar, ICommand>(nameof(MaximizeCommand), o => o.MaximizeCommand);
-
-    public ICommand MaximizeCommand { get; }
-
-    public static readonly DirectProperty<CustomTitleBar, ICommand> CloseCommandProperty =
-        AvaloniaProperty.RegisterDirect<CustomTitleBar, ICommand>(nameof(CloseCommand), o => o.CloseCommand);
-
-    public ICommand CloseCommand { get; }
-
-    #endregion
+    
     #region ButtonVisible
 
     public static readonly StyledProperty<bool> IsMaximizeButtonVisibleProperty = AvaloniaProperty.Register<
@@ -108,12 +85,13 @@ public class CustomTitleBar : TemplatedControl
     }
 
     private Window? TargetWindow { get; set; }
+    
+    private Button? MaximizeButton { get; set; }
+    private Button? MinimizeButton { get; set; }
+    private Button? CloseButton { get; set; }
 
     public CustomTitleBar()
     {
-        MinimizeCommand = new RelayCommand(AfterMinimizeClick);
-        MaximizeCommand = new RelayCommand(AfterMaximizeClick);
-        CloseCommand = new RelayCommand(AfterCloseClick);
     }
 
     protected override void OnInitialized()
@@ -136,6 +114,29 @@ public class CustomTitleBar : TemplatedControl
                     }
                 }
             };
+        }
+    }
+    
+    protected override void OnApplyTemplate(TemplateAppliedEventArgs e)
+    {
+        base.OnApplyTemplate(e);
+        MaximizeButton = e.NameScope.Find<Button>("PART_Maximize");
+        MinimizeButton = e.NameScope.Find<Button>("PART_Minimize");
+        CloseButton = e.NameScope.Find<Button>("PART_Close");
+
+        if (MaximizeButton is not null)
+        {
+            MaximizeButton.Click += (_, _) => AfterMaximizeClick();
+        }
+
+        if (MinimizeButton is not null)
+        {
+            MinimizeButton.Click += (_, _) => AfterMinimizeClick();
+        }
+
+        if (CloseButton is not null)
+        {
+            CloseButton.Click += (_, _) => AfterCloseClick();
         }
     }
 
@@ -163,6 +164,7 @@ public class CustomTitleBar : TemplatedControl
         {
             if (TargetWindow.WindowState == WindowState.Maximized)
             {
+                
                 TargetWindow.WindowState = WindowState.Normal;
             }
             else

@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace CoreLibrary.Toolkit.Extensions;
+﻿namespace Zeng.CoreLibrary.Toolkit.Extensions;
 
 public static class DisposeExtension
 {

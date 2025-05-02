@@ -1,13 +1,6 @@
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using CoreLibrary.Toolkit.Services.Setting.Structs;
-using MessagePack.Formatters;
+using Zeng.CoreLibrary.Toolkit.Services.Setting.Structs;
 
-namespace CoreLibrary.Toolkit.Services.Setting;
+namespace Zeng.CoreLibrary.Toolkit.Services.Setting;
 
 /// <summary>
 /// <see cref="ISettingService"/> 设置服务

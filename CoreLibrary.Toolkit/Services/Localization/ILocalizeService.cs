@@ -1,12 +1,7 @@
-using System;
-using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using CoreLibrary.Toolkit.Structs;
+using Zeng.CoreLibrary.Toolkit.Structs;
 
-namespace CoreLibrary.Toolkit.Services.Localization;
+namespace Zeng.CoreLibrary.Toolkit.Services.Localization;
 
 public interface ILocalizeService
 {

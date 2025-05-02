@@ -1,8 +1,8 @@
 <ResourceDictionary
     xmlns="https://github.com/avaloniaui"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:controls="using:CoreLibrary.Toolkit.Avalonia.Controls"
-    xmlns:sys="using:System">
+    xmlns:sys="using:System"
+    xmlns:controls="clr-namespace:Zeng.CoreLibrary.Toolkit.Avalonia.Controls">
 
 
     <Design.PreviewWith>
@@ -19,81 +19,86 @@
     </Design.PreviewWith>
     <ControlTheme x:Key="{x:Type controls:CustomTitleBar}" TargetType="controls:CustomTitleBar">
         <Setter Property="Height" Value="42" />
+        <Setter Property="Background" Value="{DynamicResource SystemChromeMediumLowColor}"></Setter>
         <Setter Property="Template">
             <ControlTemplate>
                 <Grid
                     Height="{TemplateBinding Height}"
+                    Margin="{TemplateBinding Margin}"
                     VerticalAlignment="Stretch"
-                    Background="Transparent"
-                    Classes="Base"
-                    ColumnDefinitions="auto,*,auto">
+                    Background="{TemplateBinding Background}"
+                    >
                     <Grid.Styles>
                         <Style Selector="Grid.Base">
                             <Setter Property="Margin" Value="0" />
                         </Style>
                         <!--  Avalonia 窗口全屏时，边框会被遮挡一部分，所以主动扩大边框  -->
-						<!-- 将窗口 SystemD... 调味 -->
-                        <!--<Style Selector="controls|CustomTitleBar:maximized Grid.Base">
+                        <!-- 将窗口 SystemD... 调味 -->
+                        <Style Selector="controls|CustomTitleBar:maximized Grid.Base">
                             <Setter Property="Margin" Value="4,8,4,0" />
-                        </Style>-->
+                        </Style>
                     </Grid.Styles>
-                    <StackPanel
-                        Margin="16,0,0,0"
-                        VerticalAlignment="Center"
-                        IsHitTestVisible="False"
-                        Orientation="Horizontal">
-                        <TextBlock Text="{TemplateBinding Title}" />
-                    </StackPanel>
-                    <ContentPresenter
-                        Grid.Column="1"
-                        VerticalAlignment="Center"
-                        Content="{TemplateBinding MiddleContent}" />
-                    <StackPanel
-                        Grid.Column="2"
-                        VerticalAlignment="Stretch"
-                        Orientation="Horizontal">
-                        <StackPanel.Styles>
-                            <Style Selector="Button">
-                                <Setter Property="Padding" Value="8" />
-                                <Setter Property="Background" Value="Transparent" />
-                                <Setter Property="VerticalAlignment" Value="Stretch" />
-                                <Setter Property="VerticalContentAlignment" Value="Center" />
-                                <Setter Property="HorizontalContentAlignment" Value="Center" />
-                                <Setter Property="CornerRadius" Value="0" />
-                                <Setter Property="Width" Value="42" />
-                            </Style>
-                            <!--<Style Selector="controls|CustomTitleBar:maximized Button">
+                    <Grid
+                        Classes="Base"
+                        ColumnDefinitions="auto,*,auto">
+                        <StackPanel
+                            Margin="16,0,0,0"
+                            VerticalAlignment="Center"
+                            IsHitTestVisible="False"
+                            Orientation="Horizontal">
+                            <TextBlock Text="{TemplateBinding Title}" />
+                        </StackPanel>
+                        <ContentPresenter
+                            Grid.Column="1"
+                            VerticalAlignment="Center"
+                            Content="{TemplateBinding MiddleContent}" />
+                        <StackPanel
+                            Grid.Column="2"
+                            VerticalAlignment="Stretch"
+                            Orientation="Horizontal">
+                            <StackPanel.Styles>
+                                <Style Selector="Button">
+                                    <Setter Property="Padding" Value="8" />
+                                    <Setter Property="Background" Value="Transparent" />
+                                    <Setter Property="VerticalAlignment" Value="Stretch" />
+                                    <Setter Property="VerticalContentAlignment" Value="Center" />
+                                    <Setter Property="HorizontalContentAlignment" Value="Center" />
+                                    <Setter Property="CornerRadius" Value="0" />
+                                    <Setter Property="Width" Value="42" />
+                                </Style>
+                                <!--<Style Selector="controls|CustomTitleBar:maximized Button">
                                 <Setter Property="VerticalContentAlignment" Value="Bottom" />
                             </Style>
                             <Style Selector="controls|CustomTitleBar:maximized Button#PART_Close">
                                 <Setter Property="Margin" Value="0,0,4,0" />
                             </Style>-->
-                        </StackPanel.Styles>
-                        <Button
-                            Name="PART_Minimize"
-                            Command="{TemplateBinding MinimizeCommand}"
-                            IsVisible="{TemplateBinding IsMinimizeButtonVisible}">
-                            <TextBlock FontFamily="Segoe Fluent Icons" Text="&#xE921;" />
-                        </Button>
-                        <Button
-                            Name="PART_Maximize"
-                            Command="{TemplateBinding MaximizeCommand}"
-                            IsVisible="{TemplateBinding IsMaximizeButtonVisible}">
-                            <TextBlock FontFamily="Segoe Fluent Icons" Text="&#xE922;">
-                                <TextBlock.Styles>
-                                    <Style Selector="controls|CustomTitleBar:maximized TextBlock">
-                                        <Setter Property="Text" Value="&#xE923;" />
-                                    </Style>
-                                </TextBlock.Styles>
-                            </TextBlock>
-                        </Button>
-                        <Button
-                            Name="PART_Close"
-                            Command="{TemplateBinding CloseCommand}"
-                            IsVisible="{TemplateBinding IsCloseButtonVisible}">
-                            <TextBlock FontFamily="Segoe Fluent Icons" Text="&#xE8BB;" />
-                        </Button>
-                    </StackPanel>
+                            </StackPanel.Styles>
+                            <Button
+                                Name="PART_Minimize"
+
+                                IsVisible="{TemplateBinding IsMinimizeButtonVisible}">
+                                <TextBlock FontFamily="Segoe Fluent Icons" Text="&#xE921;" />
+                            </Button>
+                            <Button
+                                Name="PART_Maximize"
+
+                                IsVisible="{TemplateBinding IsMaximizeButtonVisible}">
+                                <TextBlock FontFamily="Segoe Fluent Icons" Text="&#xE922;">
+                                    <TextBlock.Styles>
+                                        <Style Selector="controls|CustomTitleBar:maximized TextBlock">
+                                            <Setter Property="Text" Value="&#xE923;" />
+                                        </Style>
+                                    </TextBlock.Styles>
+                                </TextBlock>
+                            </Button>
+                            <Button
+                                Name="PART_Close"
+
+                                IsVisible="{TemplateBinding IsCloseButtonVisible}">
+                                <TextBlock FontFamily="Segoe Fluent Icons" Text="&#xE8BB;" />
+                            </Button>
+                        </StackPanel>
+                    </Grid>
                 </Grid>
             </ControlTemplate>
         </Setter>

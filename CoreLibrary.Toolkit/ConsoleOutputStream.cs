@@ -1,11 +1,6 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using CoreLibrary.Core.Contacts;
+using Zeng.CoreLibrary.Core.Contacts;
 
-namespace CoreLibrary.Toolkit;
+namespace Zeng.CoreLibrary.Toolkit;
 
 [Obsolete]
 public sealed class ConsoleOutputStream : DisposableObject

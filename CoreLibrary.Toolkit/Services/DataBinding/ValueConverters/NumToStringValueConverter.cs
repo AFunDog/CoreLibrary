@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using CoreLibrary.Toolkit.Services.DataBinding.Contracts;
+﻿using Zeng.CoreLibrary.Toolkit.Services.DataBinding.Contracts;
 
-namespace CoreLibrary.Toolkit.Services.DataBinding.ValueConverters;
+namespace Zeng.CoreLibrary.Toolkit.Services.DataBinding.ValueConverters;
 
 public sealed class NumToStringValueConverter : IValueConverter
 {

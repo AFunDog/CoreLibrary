@@ -1,14 +1,8 @@
-using System;
-using System.Collections.Frozen;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using CoreLibrary.Toolkit.Services.Localization;
-using CoreLibrary.Toolkit.Services.Navigate;
 using Microsoft.Extensions.DependencyInjection;
+using Zeng.CoreLibrary.Toolkit.Services.Localization;
+using Zeng.CoreLibrary.Toolkit.Services.Navigate;
 
-namespace CoreLibrary.Toolkit.Extensions;
+namespace Zeng.CoreLibrary.Toolkit.Extensions;
 
 using LocalizeServiceImpl = LocalizeService;
 using NavigateServiceImpl = NavigateService;

@@ -1,15 +1,7 @@
-﻿using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Channels;
-using System.Threading.Tasks;
-using CoreLibrary.Toolkit.Services.DataLoader.Structs;
-using Microsoft.VisualStudio.Threading;
+﻿using Microsoft.VisualStudio.Threading;
+using Zeng.CoreLibrary.Toolkit.Services.DataLoader.Structs;
 
-namespace CoreLibrary.Toolkit.Services.DataLoader;
+namespace Zeng.CoreLibrary.Toolkit.Services.DataLoader;
 
 internal sealed class DataLoaderService : IDataLoaderService
 {

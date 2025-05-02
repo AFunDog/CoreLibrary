@@ -1,13 +1,8 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Avalonia.Media.Imaging;
 using Avalonia.Platform;
 using CommunityToolkit.Mvvm.ComponentModel;
 
-namespace CoreLibrary.Toolkit.Avalonia.Structs;
+namespace Zeng.CoreLibrary.Toolkit.Avalonia.Structs;
 
 /// <summary>
 /// <see cref="Controls.NavigationView"/> 的菜单项数据

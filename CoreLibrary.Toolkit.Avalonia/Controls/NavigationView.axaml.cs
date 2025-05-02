@@ -1,19 +1,14 @@
-using System.Collections;
-using System.Collections.ObjectModel;
 using System.Windows.Input;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Metadata;
 using Avalonia.Controls.Presenters;
 using Avalonia.Controls.Primitives;
-using Avalonia.Controls.Templates;
-using Avalonia.Interactivity;
 using Avalonia.Metadata;
 using CommunityToolkit.Mvvm.Input;
-using CoreLibrary.Toolkit.Avalonia.Structs;
-using static System.Runtime.InteropServices.JavaScript.JSType;
+using Zeng.CoreLibrary.Toolkit.Avalonia.Structs;
 
-namespace CoreLibrary.Toolkit.Avalonia.Controls;
+namespace Zeng.CoreLibrary.Toolkit.Avalonia.Controls;
 
 /// <summary>
 /// 导航视图控件，附带侧边的菜单面板
