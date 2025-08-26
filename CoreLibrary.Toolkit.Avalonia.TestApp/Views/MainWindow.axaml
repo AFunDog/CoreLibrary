@@ -33,7 +33,7 @@
 
     </Window.Styles>
     <Grid RowDefinitions="Auto,*" Name="RootGrid">
-        <zctac:CustomTitleBar />
+        <zctac:CustomTitleBar CanDragMove="False"/>
         <zctac:NavigationView Grid.Row="1" MenuItemSource="{Binding NavigationItems}">
             <TextBlock>
                 123
