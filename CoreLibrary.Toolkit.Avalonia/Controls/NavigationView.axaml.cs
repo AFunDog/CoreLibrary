@@ -22,9 +22,8 @@ public sealed class NavigationView : TemplatedControl
     /// <summary>
     /// <inheritdoc cref="IsMenuOpen"/>
     /// </summary>
-    public static readonly StyledProperty<bool> IsMenuOpenProperty = AvaloniaProperty.Register<NavigationView, bool>(
-        nameof(IsMenuOpen)
-    );
+    public static readonly StyledProperty<bool> IsMenuOpenProperty
+        = AvaloniaProperty.Register<NavigationView, bool>(nameof(IsMenuOpen));
 
     /// <summary>
     /// 菜单面板是否打开
@@ -34,16 +33,16 @@ public sealed class NavigationView : TemplatedControl
         get => GetValue(IsMenuOpenProperty);
         set => SetValue(IsMenuOpenProperty, value);
     }
+
     #endregion
+
     #region MenuPanelExpandedWidth
 
     /// <summary>
     /// <inheritdoc cref="MenuPanelExpandedWidth"/>
     /// </summary>
-    public static readonly StyledProperty<double> MenuPanelExpandedWidthProperty = AvaloniaProperty.Register<
-        NavigationView,
-        double
-    >(nameof(MenuPanelExpandedWidth), 196);
+    public static readonly StyledProperty<double> MenuPanelExpandedWidthProperty
+        = AvaloniaProperty.Register<NavigationView, double>(nameof(MenuPanelExpandedWidth), 196);
 
     /// <summary>
     /// 菜单面板扩展宽度
@@ -55,13 +54,14 @@ public sealed class NavigationView : TemplatedControl
     }
 
     #endregion
+
     #region MenuItemSource
 
     /// <summary>
     /// <inheritdoc cref="MenuItemSource"/>
     /// </summary>
-    public static readonly StyledProperty<IEnumerable<MenuItemData>?> MenuItemSourceProperty =
-        AvaloniaProperty.Register<NavigationView, IEnumerable<MenuItemData>?>(nameof(MenuItemSource));
+    public static readonly StyledProperty<IEnumerable<MenuItemData>?> MenuItemSourceProperty
+        = AvaloniaProperty.Register<NavigationView, IEnumerable<MenuItemData>?>(nameof(MenuItemSource));
 
     /// <summary>
     /// 菜单面板的菜单项的数据来源
@@ -73,15 +73,14 @@ public sealed class NavigationView : TemplatedControl
     }
 
     #endregion
+
     #region Command
 
     /// <summary>
     /// <inheritdoc cref="Command"/>
     /// </summary>
-    public static readonly StyledProperty<ICommand?> CommandProperty = AvaloniaProperty.Register<
-        NavigationView,
-        ICommand?
-    >(nameof(Command));
+    public static readonly StyledProperty<ICommand?> CommandProperty
+        = AvaloniaProperty.Register<NavigationView, ICommand?>(nameof(Command));
 
     /// <summary>
     /// 菜单项被选中触发的命令
@@ -94,14 +93,16 @@ public sealed class NavigationView : TemplatedControl
         get => GetValue(CommandProperty);
         set => SetValue(CommandProperty, value);
     }
+
     #endregion
+
     #region Content
 
     /// <summary>
     /// <inheritdoc cref="Content"/>
     /// </summary>
-    public static readonly StyledProperty<object?> ContentProperty =
-        ContentPresenter.ContentProperty.AddOwner<NavigationView>();
+    public static readonly StyledProperty<object?> ContentProperty
+        = ContentPresenter.ContentProperty.AddOwner<NavigationView>();
 
     /// <summary>
     /// 控件展示页面内容
@@ -112,14 +113,16 @@ public sealed class NavigationView : TemplatedControl
         get => GetValue(ContentProperty);
         set => SetValue(ContentProperty, value);
     }
+
     #endregion
+
     #region MenuTopButtonCommand
 
     /// <summary>
     /// <inheritdoc cref="MenuTopButtonCommand"/>
     /// </summary>
-    internal static readonly DirectProperty<NavigationView, ICommand> MenuTopButtonCommandProperty =
-        AvaloniaProperty.RegisterDirect<NavigationView, ICommand>(
+    internal static readonly DirectProperty<NavigationView, ICommand> MenuTopButtonCommandProperty
+        = AvaloniaProperty.RegisterDirect<NavigationView, ICommand>(
             nameof(MenuTopButtonCommand),
             o => o.MenuTopButtonCommand
         );
@@ -130,10 +133,11 @@ public sealed class NavigationView : TemplatedControl
     internal ICommand MenuTopButtonCommand { get; }
 
     #endregion
+
     #region MenuItemCommand
 
-    internal static readonly DirectProperty<NavigationView, ICommand> MenuItemCommandProperty =
-        AvaloniaProperty.RegisterDirect<NavigationView, ICommand>(
+    internal static readonly DirectProperty<NavigationView, ICommand> MenuItemCommandProperty
+        = AvaloniaProperty.RegisterDirect<NavigationView, ICommand>(
             nameof(MenuItemButtonCommand),
             o => o.MenuItemButtonCommand
         );
@@ -141,20 +145,24 @@ public sealed class NavigationView : TemplatedControl
     internal ICommand MenuItemButtonCommand { get; }
 
     #endregion
+
     #region SelectedMenuItem
 
-    public static readonly DirectProperty<NavigationView, MenuItemData?> SelectedMenuItemProperty =
-        AvaloniaProperty.RegisterDirect<NavigationView, MenuItemData?>(
+    public static readonly DirectProperty<NavigationView, MenuItemData?> SelectedMenuItemProperty
+        = AvaloniaProperty.RegisterDirect<NavigationView, MenuItemData?>(
             nameof(SelectedMenuItem),
             o => o.SelectedMenuItem,
             (o, v) => o.SelectedMenuItem = v
         );
+
     private MenuItemData? _selectedMenuItem;
+
     public MenuItemData? SelectedMenuItem
     {
         get => _selectedMenuItem;
         set => SetAndRaise(SelectedMenuItemProperty, ref _selectedMenuItem, value);
     }
+
     #endregion
 
     #region DefaultSelectFirst
@@ -162,8 +170,8 @@ public sealed class NavigationView : TemplatedControl
     /// <summary>
     /// <inheritdoc cref="DefaultSelectFirst"/>
     /// </summary>
-    public static readonly DirectProperty<NavigationView, bool> DefaultSelectFirstProperty =
-        AvaloniaProperty.RegisterDirect<NavigationView, bool>(
+    public static readonly DirectProperty<NavigationView, bool> DefaultSelectFirstProperty
+        = AvaloniaProperty.RegisterDirect<NavigationView, bool>(
             nameof(DefaultSelectFirst),
             o => o.DefaultSelectFirst,
             (o, v) => o.DefaultSelectFirst = v,
@@ -179,6 +187,25 @@ public sealed class NavigationView : TemplatedControl
     {
         get => _defaultSelectFirst;
         set => SetAndRaise(DefaultSelectFirstProperty, ref _defaultSelectFirst, value);
+    }
+
+    #endregion
+
+    #region IsExpandedAboveContent
+
+    /// <summary>
+    /// <inheritdoc cref="IsExpandedAboveContent"/>
+    /// </summary>
+    public static readonly StyledProperty<bool> IsExpandedAboveContentProperty
+        = AvaloniaProperty.Register<NavigationView, bool>(nameof(IsExpandedAboveContent), false);
+
+    /// <summary>
+    /// 当值为 <see cref="bool">true</see> 时，菜单项的扩展宽度将位于内容上方
+    /// </summary>
+    public bool IsExpandedAboveContent
+    {
+        get => GetValue(IsExpandedAboveContentProperty);
+        set => SetValue(IsExpandedAboveContentProperty, value);
     }
 
     #endregion
@@ -220,6 +247,7 @@ public sealed class NavigationView : TemplatedControl
             {
                 item.IsSelected = false;
             }
+
             if (SelectedMenuItem is not null)
             {
                 SelectedMenuItem.IsSelected = true;

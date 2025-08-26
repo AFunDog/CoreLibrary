@@ -9,16 +9,19 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CoreLibrary.Toolkit", "Core
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "解决方案项", "解决方案项", "{BEFB6638-C524-45BC-BB44-4A1897C95FBD}"
 	ProjectSection(SolutionItems) = preProject
-		.csharpierrc = .csharpierrc
 		.gitattributes = .gitattributes
 		.gitignore = .gitignore
 		README.md = README.md
 		icon.png = icon.png
+		Directory.Build.props = Directory.Build.props
+		.editorconfig = .editorconfig
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CoreLibrary.Toolkit.Avalonia", "CoreLibrary.Toolkit.Avalonia\CoreLibrary.Toolkit.Avalonia.csproj", "{00268CD7-5BD0-4B9C-BE84-EB84D7E118DA}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CoreLibrary.Toolkit.Test", "CoreLibrary.Toolkit.Test\CoreLibrary.Toolkit.Test.csproj", "{C19287AD-9A67-49F0-80FE-D711ED6C589E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CoreLibrary.Toolkit.Avalonia.TestApp", "CoreLibrary.Toolkit.Avalonia.TestApp\CoreLibrary.Toolkit.Avalonia.TestApp.csproj", "{AB94169B-01BF-47B3-A6EE-4084F97BB891}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -96,6 +99,22 @@ Global
 		{C19287AD-9A67-49F0-80FE-D711ED6C589E}.Release|x64.Build.0 = Release|Any CPU
 		{C19287AD-9A67-49F0-80FE-D711ED6C589E}.Release|x86.ActiveCfg = Release|Any CPU
 		{C19287AD-9A67-49F0-80FE-D711ED6C589E}.Release|x86.Build.0 = Release|Any CPU
+		{AB94169B-01BF-47B3-A6EE-4084F97BB891}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AB94169B-01BF-47B3-A6EE-4084F97BB891}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AB94169B-01BF-47B3-A6EE-4084F97BB891}.Debug|ARM64.ActiveCfg = Debug|Any CPU
+		{AB94169B-01BF-47B3-A6EE-4084F97BB891}.Debug|ARM64.Build.0 = Debug|Any CPU
+		{AB94169B-01BF-47B3-A6EE-4084F97BB891}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{AB94169B-01BF-47B3-A6EE-4084F97BB891}.Debug|x64.Build.0 = Debug|Any CPU
+		{AB94169B-01BF-47B3-A6EE-4084F97BB891}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{AB94169B-01BF-47B3-A6EE-4084F97BB891}.Debug|x86.Build.0 = Debug|Any CPU
+		{AB94169B-01BF-47B3-A6EE-4084F97BB891}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AB94169B-01BF-47B3-A6EE-4084F97BB891}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AB94169B-01BF-47B3-A6EE-4084F97BB891}.Release|ARM64.ActiveCfg = Release|Any CPU
+		{AB94169B-01BF-47B3-A6EE-4084F97BB891}.Release|ARM64.Build.0 = Release|Any CPU
+		{AB94169B-01BF-47B3-A6EE-4084F97BB891}.Release|x64.ActiveCfg = Release|Any CPU
+		{AB94169B-01BF-47B3-A6EE-4084F97BB891}.Release|x64.Build.0 = Release|Any CPU
+		{AB94169B-01BF-47B3-A6EE-4084F97BB891}.Release|x86.ActiveCfg = Release|Any CPU
+		{AB94169B-01BF-47B3-A6EE-4084F97BB891}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

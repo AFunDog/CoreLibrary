@@ -3,6 +3,10 @@ using Zeng.CoreLibrary.Toolkit.Structs;
 
 namespace Zeng.CoreLibrary.Toolkit.Services.Localization;
 
+/// <summary>
+/// 本地化服务
+/// 将对应的key翻译成指定语言的文本
+/// </summary>
 public interface ILocalizeService
 {
     event Action<ILocalizeService, CultureInfo>? LocalizeCultureChanged;
@@ -15,22 +19,16 @@ public interface ILocalizeService
 
     public static ILocalizeService Empty { get; } = new EmptyService();
 
-    sealed class EmptyService : ILocalizeService
+    private sealed class EmptyService : ILocalizeService
     {
-        public CultureInfo LocalizeCulture { get; set; }
+        public CultureInfo LocalizeCulture { get; set; } = CultureInfo.CurrentCulture;
 
         public event Action<ILocalizeService, CultureInfo>? LocalizeCultureChanged;
         public event Action<ILocalizeService, LocalizationChangedEventArgs>? LocalizationChanged;
 
-        public string Localize(string key)
-        {
-            return key;
-        }
+        public string Localize(string key) => key;
 
-        public string Localize(string key, CultureInfo culture)
-        {
-            return key;
-        }
+        public string Localize(string key, CultureInfo culture) => key;
 
         public void SetLocalization(CultureInfo culture, string uid, string value) { }
     }

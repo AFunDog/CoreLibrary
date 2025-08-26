@@ -1,0 +1,23 @@
+<Project>
+    <PropertyGroup Condition="!$(MSBuildProjectName.Contains('Test'))">
+        <TargetFrameworks>net8.0;net9.0</TargetFrameworks>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <GenerateDocumentationFile>true</GenerateDocumentationFile>
+
+        <Authors>ZengKun</Authors>
+        <Version>1.0.1</Version>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
+        <RepositoryUrl>https://github.com/AFunDog/CoreLibrary</RepositoryUrl>
+
+        <PackageIcon>icon.png</PackageIcon>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+    </PropertyGroup>
+
+    <ItemGroup Condition="!$(MSBuildProjectName.Contains('Test'))">
+        <None Include="README.md" Pack="True" PackagePath="" />
+        <None Include="$(SolutionDir)icon.png" Pack="True" PackagePath="\" />
+    </ItemGroup>
+
+
+</Project>

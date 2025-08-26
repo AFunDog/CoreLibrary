@@ -453,3 +453,6 @@ $RECYCLE.BIN/
 !.vscode/launch.json
 !.vscode/extensions.json
 
+### Test
+#CoreLibrary.Toolkit.Test/
+#CoreLibrary.Toolkit.Avalonia.TestApp/

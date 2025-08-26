@@ -6,16 +6,34 @@
 
 
     <Design.PreviewWith>
-        <Grid
-            Width="400"
-            Height="128"
-            RowDefinitions="32,*">
+        <StackPanel Orientation="Vertical"
+                    Width="400">
             <controls:CustomTitleBar Title="{Binding $parent[Window].Title}">
                 <controls:CustomTitleBar.MiddleContent>
                     <Button HorizontalAlignment="Center" Content="123" />
                 </controls:CustomTitleBar.MiddleContent>
             </controls:CustomTitleBar>
-        </Grid>
+            <controls:CustomTitleBar Title="{Binding $parent[Window].Title}" Background="Aqua">
+                <controls:CustomTitleBar.MiddleContent>
+                    <Button HorizontalAlignment="Center" Content="123" />
+                </controls:CustomTitleBar.MiddleContent>
+            </controls:CustomTitleBar>
+            <controls:CustomTitleBar Title="{Binding $parent[Window].Title}">
+                <controls:CustomTitleBar.MiddleContent>
+                    <TextBlock Text="靠右侧" HorizontalAlignment="Right" />
+                </controls:CustomTitleBar.MiddleContent>
+            </controls:CustomTitleBar>
+            <controls:CustomTitleBar Title="{Binding $parent[Window].Title}">
+                <controls:CustomTitleBar.MiddleContent>
+                    <TextBlock Text="靠左侧" HorizontalAlignment="Left" />
+                </controls:CustomTitleBar.MiddleContent>
+            </controls:CustomTitleBar>
+            <controls:CustomTitleBar Title="{Binding $parent[Window].Title}" Height="32" Background="Aqua">
+                <controls:CustomTitleBar.MiddleContent>
+                    <Button HorizontalAlignment="Center" Content="123" />
+                </controls:CustomTitleBar.MiddleContent>
+            </controls:CustomTitleBar>
+        </StackPanel>
     </Design.PreviewWith>
     <ControlTheme x:Key="{x:Type controls:CustomTitleBar}" TargetType="controls:CustomTitleBar">
         <Setter Property="Height" Value="42" />
@@ -26,8 +44,7 @@
                     Height="{TemplateBinding Height}"
                     Margin="{TemplateBinding Margin}"
                     VerticalAlignment="Stretch"
-                    Background="{TemplateBinding Background}"
-                    >
+                    Background="{TemplateBinding Background}">
                     <Grid.Styles>
                         <Style Selector="Grid.Base">
                             <Setter Property="Margin" Value="0" />
@@ -35,14 +52,14 @@
                         <!--  Avalonia 窗口全屏时，边框会被遮挡一部分，所以主动扩大边框  -->
                         <!-- 将窗口 SystemD... 调味 -->
                         <Style Selector="controls|CustomTitleBar:maximized Grid.Base">
-                            <Setter Property="Margin" Value="4,8,4,0" />
+                            <Setter Property="Margin" Value="0,0,0,0" />
                         </Style>
                     </Grid.Styles>
                     <Grid
                         Classes="Base"
                         ColumnDefinitions="auto,*,auto">
                         <StackPanel
-                            Margin="16,0,0,0"
+                            Margin="16,0,8,0"
                             VerticalAlignment="Center"
                             IsHitTestVisible="False"
                             Orientation="Horizontal">

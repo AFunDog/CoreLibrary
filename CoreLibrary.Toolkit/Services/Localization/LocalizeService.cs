@@ -6,45 +6,49 @@ using Zeng.CoreLibrary.Toolkit.Structs;
 
 namespace Zeng.CoreLibrary.Toolkit.Services.Localization;
 
-// TODO 改为可以接收多个本地化数据提供者
-
 internal sealed class LocalizeService : DisposableObject, ILocalizeService
 {
     private Dictionary<CultureInfo, Dictionary<string, string>> LocalizationTable { get; } = [];
 
     private ILogger Logger { get; }
 
-    private IDataProvider<LocalizationData>[] DataProviders { get; }
+    private IDataProvider<IEnumerable<LocalizationData>>[] DataProviders { get; }
 
     private CultureInfo _currentCulture = CultureInfo.CurrentCulture;
+
     public CultureInfo LocalizeCulture
     {
         get => _currentCulture;
         set
         {
-            if (_currentCulture != value)
+            if (Equals(_currentCulture, value))
+                return;
+
+            // 当服务切换翻译语言时，通知改变
+
+            HashSet<string> notifyChangedKeySet = [];
+            if (LocalizationTable.TryGetValue(_currentCulture, out var dict))
             {
-                HashSet<string> notifys = [];
-                if (LocalizationTable.TryGetValue(_currentCulture, out var dict))
+                foreach (var key in dict.Keys)
                 {
-                    foreach (var key in dict.Keys)
-                    {
-                        notifys.Add(key);
-                    }
+                    notifyChangedKeySet.Add(key);
                 }
-                _currentCulture = value;
-                LocalizeCultureChanged?.Invoke(this, _currentCulture);
-                if (LocalizationTable.TryGetValue(_currentCulture, out dict))
+            }
+
+            _currentCulture = value;
+            LocalizeCultureChanged?.Invoke(this, _currentCulture);
+
+            if (LocalizationTable.TryGetValue(_currentCulture, out dict))
+            {
+                foreach (var key in dict.Keys)
                 {
-                    foreach (var key in dict.Keys)
-                    {
-                        notifys.Add(key);
-                    }
+                    notifyChangedKeySet.Add(key);
                 }
-                foreach (var key in notifys)
-                {
-                    LocalizationChanged?.Invoke(this, new(key));
-                }
+            }
+
+            foreach (var key in notifyChangedKeySet)
+            {
+                LocalizationChanged?.Invoke(this, new(key));
             }
         }
     }
@@ -52,13 +56,11 @@ internal sealed class LocalizeService : DisposableObject, ILocalizeService
     public event Action<ILocalizeService, CultureInfo>? LocalizeCultureChanged;
     public event Action<ILocalizeService, LocalizationChangedEventArgs>? LocalizationChanged;
 
-    public LocalizeService()
-        : this(Log.Logger) { }
+    public LocalizeService() : this(Log.Logger) { }
 
-    public LocalizeService(ILogger logger)
-        : this(logger, []) { }
+    public LocalizeService(ILogger logger) : this(logger, []) { }
 
-    public LocalizeService(ILogger logger, IEnumerable<IDataProvider<LocalizationData>> dataProviders)
+    public LocalizeService(ILogger logger, IEnumerable<IDataProvider<IEnumerable<LocalizationData>>> dataProviders)
     {
         Logger = logger;
         DataProviders = [.. dataProviders];
@@ -67,6 +69,7 @@ internal sealed class LocalizeService : DisposableObject, ILocalizeService
         {
             dataProvider.LoadData();
         }
+
         LoadLocalization();
 
         foreach (var dataProvider in DataProviders)
@@ -77,7 +80,9 @@ internal sealed class LocalizeService : DisposableObject, ILocalizeService
         //DataProviders.DataChanged += OnDataProviderDataChanged;
     }
 
-    private void OnDataProviderDataChanged(IDataProvider<LocalizationData> provider)
+    private void OnDataProviderDataChanged(
+        IDataProvider<IEnumerable<LocalizationData>> provider,
+        DataProviderDataChangedEventArgs<IEnumerable<LocalizationData>> providerDataChangedEventArgs)
     {
         LoadLocalization();
     }
@@ -96,6 +101,7 @@ internal sealed class LocalizeService : DisposableObject, ILocalizeService
                 return value;
             }
         }
+
         return key;
     }
 
@@ -103,7 +109,7 @@ internal sealed class LocalizeService : DisposableObject, ILocalizeService
     {
         foreach (var dataProvider in DataProviders)
         {
-            foreach (var data in dataProvider.Datas)
+            foreach (var data in dataProvider.Data ?? [])
             {
                 if (LocalizationTable.TryGetValue(data.CultureInfo, out var dict))
                 {

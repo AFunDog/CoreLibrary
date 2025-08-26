@@ -1,0 +1,43 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        xmlns:zctac="using:Zeng.CoreLibrary.Toolkit.Avalonia.Controls"
+        xmlns:vm="clr-namespace:Zeng.CoreLibrary.Toolkit.Avalonia.TestApp.ViewModels"
+        x:Class="Zeng.CoreLibrary.Toolkit.Avalonia.TestApp.Views.MainWindow"
+        x:DataType="vm:MainWindowViewModel"
+        Icon="/Assets/avalonia-logo.ico"
+        Container.Name="MainWindow"
+        Container.Sizing="Width"
+        Title="CoreLibrary.Toolkit.Avalonia.TestApp">
+    <Design.DataContext>
+        <vm:MainWindowViewModel />
+    </Design.DataContext>
+    <Window.Styles>
+        <Style Selector="Window">
+            <Setter Property="ShowInTaskbar" Value="False"></Setter>
+            <Setter Property="ExtendClientAreaToDecorationsHint" Value="True" />
+            <Setter Property="ExtendClientAreaChromeHints" Value="NoChrome" />
+            <Setter Property="Padding" Value="{Binding $self.OffScreenMargin,Mode=OneWay}" />
+            <Setter Property="MinWidth" Value="400"></Setter>
+
+        </Style>
+        <!-- 窗口最小宽度小于600时，导航栏不挤占Content区域 -->
+        <ContainerQuery Name="MainWindow" Query="max-width:600">
+            <!-- ReSharper disable once Xaml.UnexpectedElement -->
+            <Style Selector="zctac|NavigationView">
+                <Setter Property="IsExpandedAboveContent" Value="True"></Setter>
+            </Style>
+        </ContainerQuery>
+
+    </Window.Styles>
+    <Grid RowDefinitions="Auto,*" Name="RootGrid">
+        <zctac:CustomTitleBar />
+        <zctac:NavigationView Grid.Row="1" MenuItemSource="{Binding NavigationItems}">
+            <TextBlock>
+                123
+            </TextBlock>
+        </zctac:NavigationView>
+    </Grid>
+</Window>

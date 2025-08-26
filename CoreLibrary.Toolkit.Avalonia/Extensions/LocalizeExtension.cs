@@ -9,6 +9,10 @@ using Zeng.CoreLibrary.Toolkit.Structs;
 
 namespace Zeng.CoreLibrary.Toolkit.Avalonia.Extensions;
 
+/// <summary>
+/// 本地化扩展
+/// 主要在 XAML 中使用，用来对 UI 元素进行本地化
+/// </summary>
 public sealed class LocalizeExtension
 {
     //private HashSet<AvaloniaObject> Objects { get; } = [];
@@ -33,23 +37,6 @@ public sealed class LocalizeExtension
 
     public object ProvideValue(IServiceProvider serviceProvider)
     {
-        object FromBinding(BindingBase binding)
-        {
-            var obj = new LocalizationObject(Wrapper.Provider);
-            obj.Bind(LocalizationObject.KeyProperty, binding);
-            return new CompiledBindingExtension()
-            {
-                Path = new CompiledBindingPathBuilder()
-                    .Property(
-                        LocalizationObject.TextProperty,
-                        PropertyInfoAccessorFactory.CreateAvaloniaPropertyAccessor
-                    )
-                    .Build(),
-                Source = obj,
-                StringFormat = StringFormat,
-            };
-        }
-
         return Key switch
         {
             BindingBase binding => FromBinding(binding),
@@ -71,6 +58,26 @@ public sealed class LocalizeExtension
             },
             _ => Key,
         };
+
+        object FromBinding(BindingBase binding)
+        {
+            // 使用 LocalizationObject 作为中间对象
+            // 将传入的绑定表达式 BindingBase 绑定到 LocalizationObject 的 Key 属性
+            // 并将 LocalizationObject 的 Text 属性导出
+            var obj = new LocalizationObject(Wrapper.Provider);
+            obj.Bind(LocalizationObject.KeyProperty, binding);
+            return new CompiledBindingExtension()
+            {
+                Path = new CompiledBindingPathBuilder()
+                    .Property(
+                        LocalizationObject.TextProperty,
+                        PropertyInfoAccessorFactory.CreateAvaloniaPropertyAccessor
+                    )
+                    .Build(),
+                Source = obj,
+                StringFormat = StringFormat,
+            };
+        }
     }
 
     private sealed class LocalizationObject : AvaloniaObject
