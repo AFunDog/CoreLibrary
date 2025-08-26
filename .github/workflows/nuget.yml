@@ -7,28 +7,32 @@ on:
 
 jobs:
   build:
-
+    
     runs-on: ubuntu-latest
-
+    
     steps:
       - uses: actions/checkout@v4
-        
+
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: 9.0.x
-          
+
       - name: Restore dependencies
         run: dotnet restore
-        
+
       - name: Build
         run: dotnet build -c Release --no-restore
-        
+
       - name: Test
         run: dotnet test -c Release --no-build --verbosity normal
-        
+
       - name: Pack
         run: dotnet pack -c Release --no-build -o ./nuget
-        
+
       - name: Push to Nuget
         run: dotnet nuget push ./nuget/*.nupkg --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json
+          
+      - name: Push Source Package
+        run: dotnet nuget push ./nuget/*.snupkg --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json
+          

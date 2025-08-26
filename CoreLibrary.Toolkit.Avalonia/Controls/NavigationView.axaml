@@ -51,7 +51,7 @@
                     <!--  菜单项目栏  -->
                     <!-- 在 PART_MenuPanel 外套一个 Panel 能实现在展开菜单项目栏时，占用空间不变（仅当设置了 MaxWidth 时生效） -->
                     <Panel Name="AbovePanel" ZIndex="1">
-                        <Grid Name="PART_MenuPanel" 
+                        <Grid Name="PART_MenuPanel"
                               HorizontalAlignment="Left" RowDefinitions="auto,*"
                               Background="{TemplateBinding Background}">
                             <Button
@@ -73,14 +73,17 @@
                                     <Style Selector="controls|NavigationView[IsMenuOpen=false] TextBlock.MenuItemTitle">
                                         <Setter Property="Opacity" Value="0" />
                                     </Style>
-
+                                    <!-- <Style Selector="ItemsControl#MenuItemsControl /template/ :is(Panel)#MenuItemsPanel"> -->
+                                    <!--     <Setter Property="VerticalAlignment" Value="{TemplateBinding  }"></Setter> -->
+                                    <!-- </Style> -->
                                 </ScrollViewer.Styles>
-                                <ItemsControl ItemsSource="{TemplateBinding MenuItemSource}">
+                                <ItemsControl Name="MenuItemsControl" ItemsSource="{TemplateBinding MenuItemSource}">
                                     <ItemsControl.ItemsPanel>
                                         <ItemsPanelTemplate>
                                             <StackPanel
+                                                VerticalAlignment="{Binding MenuItemVerticalAlignment,RelativeSource={RelativeSource AncestorType={x:Type controls:NavigationView}}}"
+                                                Name="MenuItemsPanel"
                                                 HorizontalAlignment="Stretch"
-                                                VerticalAlignment="Center"
                                                 Orientation="Vertical" />
                                         </ItemsPanelTemplate>
                                     </ItemsControl.ItemsPanel>

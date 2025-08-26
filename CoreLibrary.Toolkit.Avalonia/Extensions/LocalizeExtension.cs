@@ -19,10 +19,17 @@ public sealed class LocalizeExtension
 
     private object Key { get; } = new();
 
+    /// <summary>
+    /// 格式化字符串
+    /// </summary>
     public string? StringFormat { get; set; }
 
     private static LocalizeServiceWrapper Wrapper { get; set; } = new(ILocalizeService.Empty);
 
+    /// <summary>
+    /// 用来设置本地化扩展使用本地化服务
+    /// </summary>
+    /// <param name="service"></param>
     public static void SetLocalizeService(ILocalizeService service)
     {
         Wrapper = new(service);
@@ -35,6 +42,11 @@ public sealed class LocalizeExtension
         Key = key;
     }
 
+    /// <summary>
+    /// 在 XAML 中自动调用的函数
+    /// </summary>
+    /// <param name="serviceProvider"></param>
+    /// <returns></returns>
     public object ProvideValue(IServiceProvider serviceProvider)
     {
         return Key switch
@@ -80,6 +92,9 @@ public sealed class LocalizeExtension
         }
     }
 
+    /// <summary>
+    /// 用来作为 LocalizeExtension 的中间对象，实现当本地化文本或语言发生变化时，翻译文本也发生变化
+    /// </summary>
     private sealed class LocalizationObject : AvaloniaObject
     {
         #region Key
@@ -128,6 +143,9 @@ public sealed class LocalizeExtension
         }
     }
 
+    /// <summary>
+    /// 用来将 ILocalizeService 的 LocalizationChanged 事件转换成 PropertyChanged 事件
+    /// </summary>
     private sealed class LocalizeServiceWrapper : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler? PropertyChanged;

@@ -14,9 +14,8 @@ namespace Zeng.CoreLibrary.Toolkit.Avalonia.Controls;
 [PseudoClasses(":maximized")]
 public class CustomTitleBar : TemplatedControl
 {
-    public static readonly StyledProperty<string> TitleProperty = AvaloniaProperty.Register<CustomTitleBar, string>(
-        nameof(Title)
-    );
+    public static readonly StyledProperty<string> TitleProperty
+        = AvaloniaProperty.Register<CustomTitleBar, string>(nameof(Title));
 
     public string Title
     {
@@ -24,10 +23,8 @@ public class CustomTitleBar : TemplatedControl
         set => SetValue(TitleProperty, value);
     }
 
-    public static readonly StyledProperty<Control?> MiddleContentProperty = AvaloniaProperty.Register<
-        CustomTitleBar,
-        Control?
-    >(nameof(MiddleContent));
+    public static readonly StyledProperty<Control?> MiddleContentProperty
+        = AvaloniaProperty.Register<CustomTitleBar, Control?>(nameof(MiddleContent));
 
     [Content]
     public Control? MiddleContent
@@ -35,13 +32,11 @@ public class CustomTitleBar : TemplatedControl
         get => GetValue(MiddleContentProperty);
         set => SetValue(MiddleContentProperty, value);
     }
-    
+
     #region ButtonVisible
 
-    public static readonly StyledProperty<bool> IsMaximizeButtonVisibleProperty = AvaloniaProperty.Register<
-        CustomTitleBar,
-        bool
-    >(nameof(IsMaximizeButtonVisible), true);
+    public static readonly StyledProperty<bool> IsMaximizeButtonVisibleProperty
+        = AvaloniaProperty.Register<CustomTitleBar, bool>(nameof(IsMaximizeButtonVisible), true);
 
     public bool IsMaximizeButtonVisible
     {
@@ -49,10 +44,8 @@ public class CustomTitleBar : TemplatedControl
         set => SetValue(IsMaximizeButtonVisibleProperty, value);
     }
 
-    public static readonly StyledProperty<bool> IsMinimizeButtonVisibleProperty = AvaloniaProperty.Register<
-        CustomTitleBar,
-        bool
-    >(nameof(IsMinimizeButtonVisible), true);
+    public static readonly StyledProperty<bool> IsMinimizeButtonVisibleProperty
+        = AvaloniaProperty.Register<CustomTitleBar, bool>(nameof(IsMinimizeButtonVisible), true);
 
     public bool IsMinimizeButtonVisible
     {
@@ -60,10 +53,8 @@ public class CustomTitleBar : TemplatedControl
         set => SetValue(IsMinimizeButtonVisibleProperty, value);
     }
 
-    public static readonly StyledProperty<bool> IsCloseButtonVisibleProperty = AvaloniaProperty.Register<
-        CustomTitleBar,
-        bool
-    >(nameof(IsCloseButtonVisible), true);
+    public static readonly StyledProperty<bool> IsCloseButtonVisibleProperty
+        = AvaloniaProperty.Register<CustomTitleBar, bool>(nameof(IsCloseButtonVisible), true);
 
     public bool IsCloseButtonVisible
     {
@@ -84,15 +75,28 @@ public class CustomTitleBar : TemplatedControl
         set => SetValue(IsHideOnCloseProperty, value);
     }
 
+    /// <summary>
+    /// <inheritdoc cref="CanDragMove"/>
+    /// </summary>
+    public static readonly StyledProperty<bool> CanDragMoveProperty
+        = AvaloniaProperty.Register<CustomTitleBar, bool>(nameof(CanDragMove), true);
+
+    /// <summary>
+    /// 标题栏是否可拖动窗口
+    /// </summary>
+    public bool CanDragMove
+    {
+        get => GetValue(CanDragMoveProperty);
+        set => SetValue(CanDragMoveProperty, value);
+    }
+
     private Window? TargetWindow { get; set; }
-    
+
     private Button? MaximizeButton { get; set; }
     private Button? MinimizeButton { get; set; }
     private Button? CloseButton { get; set; }
 
-    public CustomTitleBar()
-    {
-    }
+    public CustomTitleBar() { }
 
     protected override void OnInitialized()
     {
@@ -116,7 +120,7 @@ public class CustomTitleBar : TemplatedControl
             };
         }
     }
-    
+
     protected override void OnApplyTemplate(TemplateAppliedEventArgs e)
     {
         base.OnApplyTemplate(e);
@@ -143,7 +147,7 @@ public class CustomTitleBar : TemplatedControl
     protected override void OnPointerPressed(PointerPressedEventArgs e)
     {
         base.OnPointerPressed(e);
-        if (e.GetCurrentPoint(this).Properties.IsLeftButtonPressed)
+        if (CanDragMove && e.GetCurrentPoint(this).Properties.IsLeftButtonPressed)
         {
             TargetWindow?.BeginMoveDrag(e);
             e.Handled = true;
@@ -164,7 +168,6 @@ public class CustomTitleBar : TemplatedControl
         {
             if (TargetWindow.WindowState == WindowState.Maximized)
             {
-                
                 TargetWindow.WindowState = WindowState.Normal;
             }
             else
