@@ -6,6 +6,7 @@
         xmlns:zctac="using:Zeng.CoreLibrary.Toolkit.Avalonia.Controls"
         xmlns:vm="clr-namespace:Zeng.CoreLibrary.Toolkit.Avalonia.TestApp.ViewModels"
         x:Class="Zeng.CoreLibrary.Toolkit.Avalonia.TestApp.Views.MainWindow"
+        xmlns:converters="using:Zeng.CoreLibrary.Toolkit.Avalonia.Converters"
         x:DataType="vm:MainWindowViewModel"
         Icon="/Assets/avalonia-logo.ico"
         Container.Name="MainWindow"
@@ -21,7 +22,8 @@
             <Setter Property="ExtendClientAreaChromeHints" Value="NoChrome" />
             <Setter Property="Padding" Value="{Binding $self.OffScreenMargin,Mode=OneWay}" />
             <Setter Property="MinWidth" Value="400"></Setter>
-
+            <Setter Property="TransparencyLevelHint" Value="AcrylicBlur"></Setter>
+            <Setter Property="Background" Value="#66000000"></Setter>
         </Style>
         <!-- 窗口最小宽度小于600时，导航栏不挤占Content区域 -->
         <ContainerQuery Name="MainWindow" Query="max-width:600">
@@ -33,11 +35,18 @@
 
     </Window.Styles>
     <Grid RowDefinitions="Auto,*" Name="RootGrid">
-        <zctac:CustomTitleBar CanDragMove="False"/>
+        <zctac:CustomTitleBar CanDragMove="True" />
         <zctac:NavigationView Grid.Row="1" MenuItemSource="{Binding NavigationItems}">
-            <TextBlock>
-                123
-            </TextBlock>
+            <Grid>
+                <Border Background="Aqua">
+                    <Border.Clip>
+                        <EllipseGeometry Center="{Binding $parent.Bounds.Center}"
+                                         RadiusX="{Binding $parent.Bounds.Width,Converter={x:Static converters:MathOperationConverter.Instance},ConverterParameter=/ 2}"
+                                         RadiusY="{Binding $parent.Bounds.Height,Converter={x:Static converters:MathOperationConverter.Instance},ConverterParameter=/ 2}">
+                        </EllipseGeometry>
+                    </Border.Clip>
+                </Border>
+            </Grid>
         </zctac:NavigationView>
     </Grid>
 </Window>

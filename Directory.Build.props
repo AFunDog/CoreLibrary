@@ -6,12 +6,29 @@
         <GenerateDocumentationFile>true</GenerateDocumentationFile>
 
         <Authors>ZengKun</Authors>
-        <Version>1.0.1</Version>
+        <Version>1.0.1.5</Version>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
         <RepositoryUrl>https://github.com/AFunDog/CoreLibrary</RepositoryUrl>
 
         <PackageIcon>icon.png</PackageIcon>
         <PackageReadmeFile>README.md</PackageReadmeFile>
+
+        <!-- 生成符号包 -->
+        <IncludeSymbols>true</IncludeSymbols>
+        <!-- 指定符号包格式为 snupkg -->
+        <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+
+        <!-- 以下是为增强调试体验的可选配置，特别是使用 Source Link 时 -->
+        <!-- 在生成的 NuGet 包中包含仓库 URL -->
+        <PublishRepositoryUrl>true</PublishRepositoryUrl>
+        <!-- 在 PDB 中嵌入未由源代码管理器跟踪的源文件 -->
+        <EmbedUntrackedSources>true</EmbedUntrackedSources>
+        <!-- 控制调试信息格式，通常 'portable' 是跨平台推荐值 -->
+        <DebugType>portable</DebugType>
+    </PropertyGroup>
+    
+    <PropertyGroup Condition="$(MSBuildProjectName.Contains('Test'))">
+        <IsPackable>false</IsPackable>
     </PropertyGroup>
 
     <ItemGroup Condition="!$(MSBuildProjectName.Contains('Test'))">

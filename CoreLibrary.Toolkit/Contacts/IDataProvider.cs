@@ -2,14 +2,6 @@ using Zeng.CoreLibrary.Toolkit.Structs;
 
 namespace Zeng.CoreLibrary.Toolkit.Contacts;
 
-// public interface IDataProvider
-// {
-//     void LoadData();
-//
-//     Task LoadDataAsync();
-// }
-
-
 /// <summary>
 /// 数据提供者接口
 /// </summary>
@@ -39,7 +31,7 @@ public interface IDataProvider<T> where T : notnull
     /// 主动加载数据（异步）
     /// </summary>
     /// <returns></returns>
-    public virtual Task LoadDataAsync() => Task.Run(LoadData);
+    public virtual Task LoadDataAsync(CancellationToken cancellationToken = default) => Task.Run(LoadData, cancellationToken);
 
     private sealed class EmptyProvider : IDataProvider<T>
     {

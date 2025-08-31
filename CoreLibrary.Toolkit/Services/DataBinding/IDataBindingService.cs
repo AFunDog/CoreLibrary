@@ -5,6 +5,7 @@ using Zeng.CoreLibrary.Toolkit.Services.DataBinding.Contracts;
 
 namespace Zeng.CoreLibrary.Toolkit.Services.DataBinding;
 
+[Obsolete]
 public interface IDataBindingService
 {
     public static IDataBindingService Implement => new DataBindingService();
