@@ -35,17 +35,22 @@
 
     </Window.Styles>
     <Grid RowDefinitions="Auto,*" Name="RootGrid">
-        <zctac:CustomTitleBar CanDragMove="True" />
-        <zctac:NavigationView Grid.Row="1" MenuItemSource="{Binding NavigationItems}">
+        <zctac:CustomTitleBar CanDragMove="True"  Background="{DynamicResource SystemAltLowColor}"/>
+        <zctac:NavigationView MenuItemVerticalAlignment="Top" Grid.Row="1" MenuItemSource="{Binding NavigationItems}" Background="{DynamicResource SystemAltLowColor}">
             <Grid>
-                <Border Background="Aqua">
-                    <Border.Clip>
-                        <EllipseGeometry Center="{Binding $parent.Bounds.Center}"
-                                         RadiusX="{Binding $parent.Bounds.Width,Converter={x:Static converters:MathOperationConverter.Instance},ConverterParameter=/ 2}"
-                                         RadiusY="{Binding $parent.Bounds.Height,Converter={x:Static converters:MathOperationConverter.Instance},ConverterParameter=/ 2}">
-                        </EllipseGeometry>
-                    </Border.Clip>
-                </Border>
+                <TextBlock>
+                    123
+                    123
+                    123
+                </TextBlock>
+                <!-- <Border Background="Aqua"> -->
+                <!--     <Border.Clip> -->
+                <!--         <EllipseGeometry Center="{Binding $parent.Bounds.Center}" -->
+                <!--                          RadiusX="{Binding $parent.Bounds.Width,Converter={x:Static converters:MathOperationConverter.Instance},ConverterParameter=/ 2}" -->
+                <!--                          RadiusY="{Binding $parent.Bounds.Height,Converter={x:Static converters:MathOperationConverter.Instance},ConverterParameter=/ 2}"> -->
+                <!--         </EllipseGeometry> -->
+                <!--     </Border.Clip> -->
+                <!-- </Border> -->
             </Grid>
         </zctac:NavigationView>
     </Grid>

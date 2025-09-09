@@ -5,10 +5,12 @@ using Serilog;
 using Zeng.CoreLibrary.Toolkit.Extensions;
 using Zeng.CoreLibrary.Toolkit.Windows.Extensions;
 
+
 namespace Zeng.CoreLibrary.Toolkit.Avalonia.TestApp;
 
 sealed class Program
 {
+    
     public static IServiceProvider ServiceProvider { get; } = new ServiceCollection()
         .AddSingleton<ILogger>(_ => new LoggerConfiguration().MinimumLevel.Verbose().WriteTo.Console().CreateLogger())
         .UseSystemMonitor()

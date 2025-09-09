@@ -4,6 +4,7 @@ using Avalonia.Controls;
 using Avalonia.Controls.Metadata;
 using Avalonia.Controls.Presenters;
 using Avalonia.Controls.Primitives;
+using Avalonia.Layout;
 using Avalonia.Metadata;
 using CommunityToolkit.Mvvm.Input;
 using Zeng.CoreLibrary.Toolkit.Avalonia.Structs;
@@ -190,7 +191,7 @@ public sealed class NavigationView : TemplatedControl
     }
 
     #endregion
-
+    
     #region IsExpandedAboveContent
 
     /// <summary>
@@ -210,8 +211,28 @@ public sealed class NavigationView : TemplatedControl
 
     #endregion
 
+    #region MenuItemVerticalAlignment
+
+    /// <summary>
+    /// <inheritdoc cref="MenuItemVerticalAlignment"/>
+    /// </summary>
+    public static readonly StyledProperty<VerticalAlignment> MenuItemVerticalAlignmentProperty
+        = AvaloniaProperty.Register<NavigationView, VerticalAlignment>(nameof(MenuItemVerticalAlignment), VerticalAlignment.Center);
+    
+    /// <summary>
+    /// 菜单项垂直对齐方式
+    /// </summary>
+    public VerticalAlignment MenuItemVerticalAlignment
+    {
+        get => GetValue(MenuItemVerticalAlignmentProperty);
+        set => SetValue(MenuItemVerticalAlignmentProperty, value);
+    }
+
+    #endregion
+    
     public NavigationView()
     {
+        
         MenuTopButtonCommand = new RelayCommand(AfterMenuTopButtonClick);
         MenuItemButtonCommand = new RelayCommand<MenuItemData>(
             OnMenuItemButtonClick,
