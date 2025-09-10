@@ -30,8 +30,8 @@ internal class SourceContextEnricher : ILogEventEnricher
             && value is ScalarValue { Value: string name })
         {
             var shortName = name[(name.LastIndexOf('.') + 1)..];
-            logEvent.AddOrUpdateProperty(factory.CreateProperty("SourceContext", $"{name} "));
-            logEvent.AddOrUpdateProperty(factory.CreateProperty("SourceContext.Short", $"{shortName} "));
+            // logEvent.AddOrUpdateProperty(factory.CreateProperty("SourceContext", $"{name} "));
+            logEvent.AddOrUpdateProperty(factory.CreateProperty("SourceContext.Short", shortName));
         }
     }
 }
