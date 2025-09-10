@@ -2,6 +2,7 @@ using System.Globalization;
 using Serilog;
 using Zeng.CoreLibrary.Core.Contacts;
 using Zeng.CoreLibrary.Toolkit.Contacts;
+using Zeng.CoreLibrary.Toolkit.Logging;
 using Zeng.CoreLibrary.Toolkit.Structs;
 
 namespace Zeng.CoreLibrary.Toolkit.Services.Localization;
@@ -62,7 +63,7 @@ internal sealed class LocalizeService : DisposableObject, ILocalizeService
 
     public LocalizeService(ILogger logger, IEnumerable<IDataProvider<IEnumerable<LocalizationData>>> dataProviders)
     {
-        Logger = logger;
+        Logger = logger.ForContext<LocalizeService>();
         DataProviders = [.. dataProviders];
 
         foreach (var dataProvider in DataProviders)
@@ -132,6 +133,6 @@ internal sealed class LocalizeService : DisposableObject, ILocalizeService
 
     protected override void OnDisposed()
     {
-        Logger.Verbose("{Service} 已被销毁", nameof(LocalizeService));
+        Logger.Trace().Verbose("销毁");
     }
 }

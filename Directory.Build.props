@@ -6,7 +6,7 @@
         <GenerateDocumentationFile>true</GenerateDocumentationFile>
 
         <Authors>ZengKun</Authors>
-        <Version>1.0.1.8</Version>
+        <Version>1.0.1.9</Version>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
         <RepositoryUrl>https://github.com/AFunDog/CoreLibrary</RepositoryUrl>
 

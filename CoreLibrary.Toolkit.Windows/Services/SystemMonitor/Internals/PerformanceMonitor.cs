@@ -3,6 +3,7 @@ using Windows.Win32.System.SystemInformation;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Serilog;
 using Zeng.CoreLibrary.Toolkit.Extensions;
+using Zeng.CoreLibrary.Toolkit.Logging;
 using Zeng.CoreLibrary.Toolkit.Windows.Contacts;
 using static Windows.Win32.PInvoke;
 

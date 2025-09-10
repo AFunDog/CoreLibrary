@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using Serilog;
 using Zeng.CoreLibrary.Toolkit.Extensions;
+using Zeng.CoreLibrary.Toolkit.Logging;
 
 namespace Zeng.CoreLibrary.Toolkit.Windows.Services.SystemMonitor.Internals;
 
