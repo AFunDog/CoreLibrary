@@ -7,87 +7,56 @@ namespace Zeng.CoreLibrary.Toolkit.Avalonia.Structs;
 /// <summary>
 /// <see cref="Controls.NavigationView"/> 的菜单项数据
 /// </summary>
-public sealed partial class MenuItemData : ObservableObject, IDisposable
+public sealed partial class MenuItemData : ObservableObject
 {
-    private string _title = string.Empty;
-
     /// <summary>
     /// 标题
     /// </summary>
-    public string Title
-    {
-        get => _title;
-        set => SetProperty(ref _title, value);
-    }
+    [ObservableProperty]
+    public partial string Title { get; set; } = string.Empty;
+    
+    [ObservableProperty]
+    public partial object? Icon { get; set; }
 
-    private Bitmap? _icon;
-
-    /// <summary>
-    /// 图标
-    /// </summary>
-    public Bitmap? Icon
-    {
-        get => _icon;
-        set => SetProperty(ref _icon, value);
-    }
-
-    private char? _glyph;
-
-    /// <summary>
-    /// 字符图标
-    /// </summary>
-    public char? Glyph
-    {
-        get => _glyph;
-        set
-        {
-            if (SetProperty(ref _glyph, value))
-            {
-                OnPropertyChanged(nameof(GlyphString));
-                OnPropertyChanged(nameof(UseFontIcon));
-            }
-        }
-    }
-
-    private object? _tag;
+    // /// <summary>
+    // /// 图标
+    // /// </summary>
+    // [ObservableProperty]
+    // public partial Bitmap? Icon { get; set; }
+    //
+    // /// <summary>
+    // /// 字符图标
+    // /// </summary>
+    // [ObservableProperty]
+    // public partial char? Glyph
+    // {
+    //     get;
+    //     set
+    //     {
+    //         if (SetProperty(ref field, value))
+    //         {
+    //             OnPropertyChanged(nameof(GlyphString));
+    //             OnPropertyChanged(nameof(UseFontIcon));
+    //         }
+    //     }
+    // }
 
     /// <summary>
     /// 额外数据
     /// </summary>
-    public object? Tag
-    {
-        get => _tag;
-        set => SetProperty(ref _tag, value);
-    }
+    [ObservableProperty]
+    public partial object? Tag { get; set; }
 
-    private bool _isSelected;
-    internal bool IsSelected
-    {
-        get => _isSelected;
-        set => SetProperty(ref _isSelected, value);
-    }
+    [ObservableProperty]
+    internal partial bool IsSelected { get; set; }
 
-    internal string GlyphString => Glyph.HasValue ? Glyph.Value.ToString() : string.Empty;
-    internal bool UseFontIcon => Glyph.HasValue;
+    // internal string GlyphString => Glyph.HasValue ? Glyph.Value.ToString() : string.Empty;
+    // internal bool UseFontIcon => Glyph.HasValue;
 
-    public MenuItemData(string title, Bitmap? icon, object? tag = null)
+    public MenuItemData(string title, object? icon, object? tag = null)
     {
         Title = title;
         Icon = icon;
         Tag = tag;
-    }
-
-    public MenuItemData(string tile, string iconPath, object? tag = null)
-        : this(tile, new Bitmap(AssetLoader.Open(new Uri(iconPath))), tag) { }
-
-    public MenuItemData(string title, char glyph, object? tag = null)
-        : this(title, icon: null, tag)
-    {
-        Glyph = glyph;
-    }
-
-    public void Dispose()
-    {
-        Icon?.Dispose();
     }
 }

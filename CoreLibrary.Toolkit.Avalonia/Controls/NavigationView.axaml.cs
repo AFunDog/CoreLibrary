@@ -117,6 +117,19 @@ public sealed class NavigationView : TemplatedControl
 
     #endregion
 
+    #region MenuTopIcon
+
+    public static readonly StyledProperty<object?> MenuTopIconProperty
+        = AvaloniaProperty.Register<NavigationView, object?>(nameof(MenuTopIcon));
+
+    public object? MenuTopIcon
+    {
+        get => GetValue(MenuTopIconProperty);
+        set => SetValue(MenuTopIconProperty, value);
+    }
+
+    #endregion
+
     #region MenuTopButtonCommand
 
     /// <summary>
@@ -191,7 +204,7 @@ public sealed class NavigationView : TemplatedControl
     }
 
     #endregion
-    
+
     #region IsExpandedAboveContent
 
     /// <summary>
@@ -217,8 +230,11 @@ public sealed class NavigationView : TemplatedControl
     /// <inheritdoc cref="MenuItemVerticalAlignment"/>
     /// </summary>
     public static readonly StyledProperty<VerticalAlignment> MenuItemVerticalAlignmentProperty
-        = AvaloniaProperty.Register<NavigationView, VerticalAlignment>(nameof(MenuItemVerticalAlignment), VerticalAlignment.Center);
-    
+        = AvaloniaProperty.Register<NavigationView, VerticalAlignment>(
+            nameof(MenuItemVerticalAlignment),
+            VerticalAlignment.Center
+        );
+
     /// <summary>
     /// 菜单项垂直对齐方式
     /// </summary>
@@ -229,10 +245,9 @@ public sealed class NavigationView : TemplatedControl
     }
 
     #endregion
-    
+
     public NavigationView()
     {
-        
         MenuTopButtonCommand = new RelayCommand(AfterMenuTopButtonClick);
         MenuItemButtonCommand = new RelayCommand<MenuItemData>(
             OnMenuItemButtonClick,
