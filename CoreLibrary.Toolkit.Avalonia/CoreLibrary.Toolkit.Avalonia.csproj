@@ -3,6 +3,7 @@
 		<AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
 		<PackageId>Zeng.CoreLibrary.Toolkit.Avalonia</PackageId>
 		<RootNamespace>$(PackageId)</RootNamespace>
+        <LangVersion>preview</LangVersion>
 	</PropertyGroup>
 
 	<ItemGroup>

@@ -3,6 +3,7 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using Serilog;
 using Serilog.Configuration;
+using Serilog.Events;
 using Zeng.CoreLibrary.Core.Contacts;
 
 namespace Zeng.CoreLibrary.Toolkit.Logging;
@@ -31,15 +32,17 @@ public static partial class LoggerExtension
         [CallerMemberName] string caller = "",
         [CallerLineNumber] int line = 0)
     {
-        TraceInfoEnricher.Instance.FilePath = filePath;
-        TraceInfoEnricher.Instance.Caller = caller;
-        TraceInfoEnricher.Instance.Line = line;
-        ResetLogger.Instance.BaseLogger = logger;
-        return ResetLogger.Instance;
+        // BUG 存在线程安全问题，可能导致信息错误
+        // TraceInfoEnricher.Instance.FilePath = filePath;
+        // TraceInfoEnricher.Instance.Caller = caller;
+        // TraceInfoEnricher.Instance.Line = line;
+        // ResetLogger.Instance.BaseLogger = logger;
+        // return ResetLogger.Instance;
+        return logger.ForContext(new TraceEnricher() { FilePath = filePath, Caller = caller, Line = line });
     }
 
     /// <summary>
-    /// 添加记录文件、调用者和调用位置信息的 Enricher
+    /// 整合记录文件、调用者和调用位置信息的 Enricher
     /// <inheritdoc cref="TraceInfoEnricher"/>
     /// </summary>
     /// <param name="configuration"></param>

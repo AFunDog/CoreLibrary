@@ -21,8 +21,7 @@ public interface INavigateService
     /// <typeparam name="T"></typeparam>
     /// <param name="route"></param>
     /// <returns></returns>
-    INavigateService RegisterViewRoute<T>(string route)
-        where T : new();
+    INavigateService RegisterViewRoute<T>(string route) where T : new();
 
     /// <summary>
     /// 注册导航路由
@@ -31,8 +30,7 @@ public interface INavigateService
     /// <param name="route"></param>
     /// <param name="viewFactory"></param>
     /// <returns></returns>
-    INavigateService RegisterViewRoute<T>(string route, Func<T> viewFactory)
-        where T : class;
+    INavigateService RegisterViewRoute<T>(string route, Func<T> viewFactory) where T : class;
 
     /// <summary>
     /// 导航到指定路由
@@ -42,6 +40,17 @@ public interface INavigateService
     /// </remarks>
     /// <param name="route"></param>
     void Navigate(string route);
+
+    /// <summary>
+    /// 回到上一个路由
+    /// </summary>
+    void Back();
+
+    /// <summary>
+    /// 能否回退
+    /// </summary>
+    /// <returns></returns>
+    bool CanBack();
 
     /// <summary>
     /// 强制刷新
@@ -67,13 +76,13 @@ public interface INavigateService
 
         public event Action<INavigateService, object>? OnNavigated;
 
-        public INavigateService RegisterViewRoute<T>(string route)
-            where T : new() => this;
+        public INavigateService RegisterViewRoute<T>(string route) where T : new() => this;
 
-        public INavigateService RegisterViewRoute<T>(string route, Func<T> viewFactory)
-            where T : class => this;
+        public INavigateService RegisterViewRoute<T>(string route, Func<T> viewFactory) where T : class => this;
 
         public void Navigate(string route) { }
+        public void Back() { }
+        public bool CanBack() => false;
 
         public void ForceRefresh() { }
 

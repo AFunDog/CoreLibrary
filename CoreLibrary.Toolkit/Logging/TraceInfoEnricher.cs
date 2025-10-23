@@ -1,4 +1,5 @@
-﻿using Serilog.Core;
+﻿using System.Text;
+using Serilog.Core;
 using Serilog.Events;
 
 namespace Zeng.CoreLibrary.Toolkit.Logging;
@@ -16,34 +17,50 @@ internal sealed class TraceInfoEnricher : ILogEventEnricher
 {
     public static TraceInfoEnricher Instance { get; } = new();
 
-    public string? FilePath { get; set; }
-    public string? Caller { get; set; }
-    public int? Line { get; set; }
+    // public string? FilePath { get; set; }
+    // public string? Caller { get; set; }
+    // public int? Line { get; set; }
 
     // TODO 当 SourceContext 为空时，使用 FilePath 作为 SourceContext
     public void Enrich(LogEvent logEvent, ILogEventPropertyFactory propertyFactory)
     {
-        if (FilePath is not null)
+        if (GetSpace() is { } spaceValue)
         {
-            logEvent.AddOrUpdateProperty(propertyFactory.CreateProperty("FilePath", FilePath));
-            logEvent.AddOrUpdateProperty(propertyFactory.CreateProperty("FileName", Path.GetFileName(FilePath)));
+            var builder = new StringBuilder().Append(spaceValue);
+            if (logEvent.Properties.TryGetValue("Caller", out var caller)
+                && caller is ScalarValue { Value: { } callerValue })
+            {
+                builder.Append('|').Append(callerValue);
+            }
+            
+            if (logEvent.Properties.TryGetValue("CallerLine", out var callerLine)
+                && callerLine is ScalarValue { Value: { } callerLineValue })
+            {
+                builder.Append('(').Append(callerLineValue).Append(')');
+            }
+            
+
+
+            builder.Append(' ');
+            logEvent.AddOrUpdateProperty(propertyFactory.CreateProperty("TraceInfo", builder.ToString()));
         }
 
-        if (Caller is not null)
-            logEvent.AddOrUpdateProperty(propertyFactory.CreateProperty("Caller", Caller));
-        if (Line is not null)
-            logEvent.AddOrUpdateProperty(propertyFactory.CreateProperty("CallerLine", Line));
+        string? GetSpace()
+        {
+            if (logEvent.Properties.TryGetValue("FilePath", out var filePath)
+                && filePath is ScalarValue { Value : { } filePathValue })
+            {
+                return Path.GetFileNameWithoutExtension(filePathValue.ToString());
+            }
 
-        // if (FilePath is not null && Caller is not null && Line is not null)
-        //     logEvent.AddOrUpdateProperty(
-        //         propertyFactory.CreateProperty("TraceInfo", $"{Path.GetFileName(FilePath)}>{Caller}({Line}) ")
-        //     );
-    }
+            if (logEvent.Properties.TryGetValue("SourceContext.Short", out var sourceContextShort)
+                && sourceContextShort is ScalarValue { Value : { } sourceContextShortValue })
+            {
+                return sourceContextShortValue.ToString()?.Trim();
+            }
 
-    public void Reset()
-    {
-        FilePath = null;
-        Caller = null;
-        Line = null;
+            return null;
+        }
+
     }
 }

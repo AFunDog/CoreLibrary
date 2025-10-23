@@ -58,15 +58,19 @@
                                 HorizontalAlignment="Stretch"
                                 Background="Transparent"
                                 Classes="MenuItem"
-                                Command="{TemplateBinding MenuTopButtonCommand}">
-                                <TextBlock
-                                    Width="40"
-                                    HorizontalAlignment="Left"
-                                    VerticalAlignment="Center"
-                                    FontFamily="Segoe Fluent Icons"
-                                    FontSize="18"
-                                    Text="&#xE700;"
-                                    TextAlignment="Center" />
+                                Command="{TemplateBinding MenuTopButtonCommand}"
+                                HorizontalContentAlignment="Left">
+                                <!-- <TextBlock -->
+                                <!--     Width="40" -->
+                                <!--     HorizontalAlignment="Left" -->
+                                <!--     VerticalAlignment="Center" -->
+                                <!--     FontFamily="Segoe Fluent Icons" -->
+                                <!--     FontSize="18" -->
+                                <!--     Text="&#xE700;" -->
+                                <!--     TextAlignment="Center" /> -->
+                                <Viewbox Width="40" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                    <ContentControl Content="{TemplateBinding MenuTopIcon}"></ContentControl>
+                                </Viewbox>
                             </Button>
                             <ScrollViewer Grid.Row="1">
                                 <ScrollViewer.Styles>
@@ -114,29 +118,32 @@
                                                 </Button.Styles>
                                                 <Grid
                                                     HorizontalAlignment="Stretch"
-                                                    ColumnDefinitions="40,*">
+                                                    ColumnDefinitions="Auto,*">
                                                     <!-- 选中指示标记 -->
                                                     <Border Width="4" CornerRadius="4" HorizontalAlignment="Left"
                                                             Margin="0,4" Grid.Column="0"
                                                             Classes="LeftSign"
                                                             Background="{DynamicResource SystemControlHighlightAccentRevealBackgroundBrush}" />
+                                                    <Viewbox Grid.Column="0" Width="40" Stretch="Uniform" StretchDirection="DownOnly">
+                                                        <ContentControl Content="{Binding Icon,Mode=OneWay}" />
+                                                    </Viewbox>
                                                     <!-- 图像图标 -->
-                                                    <Image
-                                                        Grid.Column="0"
-                                                        Height="24"
-                                                        HorizontalAlignment="Center"
-                                                        IsVisible="{Binding !UseFontIcon}"
-                                                        Source="{Binding Icon, Mode=OneWay}"
-                                                        Stretch="Uniform" />
-                                                    <!-- 字符图标 -->
-                                                    <TextBlock
-                                                        Grid.Column="0" HorizontalAlignment="Center"
-                                                        VerticalAlignment="Center"
-                                                        FontFamily="Segoe Fluent Icons"
-                                                        FontSize="18"
-                                                        IsVisible="{Binding UseFontIcon}"
-                                                        Text="{Binding GlyphString}"
-                                                        TextAlignment="Center" />
+                                                    <!-- <Image -->
+                                                    <!--     Grid.Column="0" -->
+                                                    <!--     Height="24" -->
+                                                    <!--     HorizontalAlignment="Center" -->
+                                                    <!--     IsVisible="{Binding !UseFontIcon}" -->
+                                                    <!--     Source="{Binding Icon, Mode=OneWay}" -->
+                                                    <!--     Stretch="Uniform" /> -->
+                                                    <!-- ~1~ 字符图标 @1@ -->
+                                                    <!-- <TextBlock -->
+                                                    <!--     Grid.Column="0" HorizontalAlignment="Center" -->
+                                                    <!--     VerticalAlignment="Center" -->
+                                                    <!--     FontFamily="Segoe Fluent Icons" -->
+                                                    <!--     FontSize="18" -->
+                                                    <!--     IsVisible="{Binding UseFontIcon}" -->
+                                                    <!--     Text="{Binding GlyphString}" -->
+                                                    <!--     TextAlignment="Center" /> -->
                                                     <!-- 标题 -->
                                                     <TextBlock
                                                         Grid.Column="1"

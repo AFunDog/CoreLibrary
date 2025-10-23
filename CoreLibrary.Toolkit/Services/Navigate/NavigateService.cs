@@ -9,6 +9,7 @@ internal sealed class NavigateService : INavigateService
     public event Action<INavigateService, object?>? OnNavigated;
 
     private Dictionary<string, Func<object>> RouteTable { get; } = [];
+    private Stack<string> RouteStack { get; } = [];
 
     public string CurrentRoute { get; private set; } = "";
 
@@ -22,15 +23,13 @@ internal sealed class NavigateService : INavigateService
         OnNavigated = null;
     }
 
-    public INavigateService RegisterViewRoute<T>(string route)
-        where T : new()
+    public INavigateService RegisterViewRoute<T>(string route) where T : new()
     {
         RouteTable[route] = () => new T();
         return this;
     }
 
-    public INavigateService RegisterViewRoute<T>(string route, Func<T> viewFactory)
-        where T : class
+    public INavigateService RegisterViewRoute<T>(string route, Func<T> viewFactory) where T : class
     {
         RouteTable[route] = viewFactory;
         return this;
@@ -41,9 +40,24 @@ internal sealed class NavigateService : INavigateService
         // 如果 CurrentRoute 不变则不触发导航事件
         if (CurrentRoute == route)
             return;
+        RouteStack.Push(CurrentRoute);
         CurrentRoute = route;
         var view = GetRouteView();
         OnNavigated?.Invoke(this, view);
+    }
+
+    public void Back()
+    {
+        if (CanBack() && RouteStack.Count != 0)
+        {
+            CurrentRoute = RouteStack.Pop();
+            OnNavigated?.Invoke(this, GetRouteView());
+        }
+    }
+
+    public bool CanBack()
+    {
+        return RouteStack.Count != 0;
     }
 
     public void ForceRefresh()
@@ -66,6 +80,7 @@ internal sealed class NavigateService : INavigateService
                 Logger.Error(e, "尝试生成路由对应的视图错误");
             }
         }
+
         return default;
     }
 }

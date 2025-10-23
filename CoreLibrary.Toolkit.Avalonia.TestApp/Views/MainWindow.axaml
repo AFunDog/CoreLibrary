@@ -36,7 +36,10 @@
     </Window.Styles>
     <Grid RowDefinitions="Auto,*" Name="RootGrid">
         <zctac:CustomTitleBar CanDragMove="True"  Background="{DynamicResource SystemAltLowColor}"/>
-        <zctac:NavigationView MenuItemVerticalAlignment="Top" Grid.Row="1" MenuItemSource="{Binding NavigationItems}" Background="{DynamicResource SystemAltLowColor}">
+        <zctac:NavigationView  MenuItemVerticalAlignment="Top" Grid.Row="1" MenuItemSource="{Binding NavigationItems}" Background="{DynamicResource SystemAltLowColor}">
+            <zctac:NavigationView.MenuTopIcon>
+                <LucideIcon Kind="Menu" />
+            </zctac:NavigationView.MenuTopIcon>
             <Grid>
                 <TextBlock>
                     123

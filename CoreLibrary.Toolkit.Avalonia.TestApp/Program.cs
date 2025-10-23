@@ -16,7 +16,7 @@ sealed class Program
             => new LoggerConfiguration()
                 .Enrich.FromTraceInfo()
                 .MinimumLevel.Verbose()
-                .WriteTo.Console(outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] {SourceContext.Short}{FileName}>{Caller}({CallerLine}) {Message:lj}{NewLine}{Exception}")
+                .WriteTo.Console(outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] {SourceContext.Short}{TraceInfo}{Message:lj}{NewLine}{Exception}")
                 .CreateLogger()
         )
         .UseSystemMonitor()
