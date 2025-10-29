@@ -12,8 +12,8 @@ public interface ILocalizeService
     event Action<ILocalizeService, CultureInfo>? LocalizeCultureChanged;
     event Action<ILocalizeService, LocalizationChangedEventArgs>? LocalizationChanged;
     CultureInfo LocalizeCulture { get; set; }
-    string Localize(string key);
-    string Localize(string key, CultureInfo culture);
+    string Localize(string key,string? fallback = null);
+    string Localize(string key, CultureInfo culture,string? fallback = null);
 
     //void SetLocalization(CultureInfo culture, string uid, string value);
 
@@ -26,9 +26,9 @@ public interface ILocalizeService
         public event Action<ILocalizeService, CultureInfo>? LocalizeCultureChanged;
         public event Action<ILocalizeService, LocalizationChangedEventArgs>? LocalizationChanged;
 
-        public string Localize(string key) => key;
+        public string Localize(string key,string? fallback = null) => key;
 
-        public string Localize(string key, CultureInfo culture) => key;
+        public string Localize(string key, CultureInfo culture,string? fallback = null) => key;
 
         public void SetLocalization(CultureInfo culture, string uid, string value) { }
     }

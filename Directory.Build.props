@@ -6,12 +6,14 @@
         <GenerateDocumentationFile>true</GenerateDocumentationFile>
 
         <Authors>ZengKun</Authors>
-        <Version>1.0.3</Version>
+        <Version>1.0.4</Version>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
         <RepositoryUrl>https://github.com/AFunDog/CoreLibrary</RepositoryUrl>
 
         <PackageIcon>icon.png</PackageIcon>
         <PackageReadmeFile>README.md</PackageReadmeFile>
+        
+        <LangVersion>preview</LangVersion>
 
         <!-- 生成符号包 -->
         <IncludeSymbols>true</IncludeSymbols>

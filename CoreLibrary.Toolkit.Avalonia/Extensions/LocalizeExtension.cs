@@ -4,6 +4,7 @@ using Avalonia.Data;
 using Avalonia.Data.Core;
 using Avalonia.Markup.Xaml.MarkupExtensions;
 using Avalonia.Markup.Xaml.MarkupExtensions.CompiledBindings;
+using Avalonia.Metadata;
 using Zeng.CoreLibrary.Toolkit.Services.Localization;
 using Zeng.CoreLibrary.Toolkit.Structs;
 
@@ -17,7 +18,10 @@ public sealed class LocalizeExtension
 {
     //private HashSet<AvaloniaObject> Objects { get; } = [];
 
-    private object Key { get; } = new();
+    [Content]
+    public object Key { get; set; } = new();
+
+    public string? Fallback { get; set; } = null;
 
     /// <summary>
     /// 格式化字符串
@@ -51,14 +55,14 @@ public sealed class LocalizeExtension
     {
         return Key switch
         {
-            BindingBase binding => FromBinding(binding),
+            IBinding binding => FromBinding(binding),
             string key => new CompiledBindingExtension
             {
                 Path = new CompiledBindingPathBuilder()
                     .Property(
                         new ClrPropertyInfo(
                             key,
-                            o => (o as LocalizeServiceWrapper)?.Provider.Localize(key),
+                            o => (o as LocalizeServiceWrapper)?.Provider.Localize(key, Fallback),
                             (_, _) => { },
                             typeof(string)
                         ),
@@ -68,15 +72,15 @@ public sealed class LocalizeExtension
                 Source = Wrapper,
                 StringFormat = StringFormat,
             },
-            _ => Key,
+            _ => Fallback ?? Key,
         };
 
-        object FromBinding(BindingBase binding)
+        object FromBinding(IBinding binding)
         {
             // 使用 LocalizationObject 作为中间对象
             // 将传入的绑定表达式 BindingBase 绑定到 LocalizationObject 的 Key 属性
             // 并将 LocalizationObject 的 Text 属性导出
-            var obj = new LocalizationObject(Wrapper.Provider);
+            var obj = new LocalizationObject(Wrapper.Provider) { Fallback = Fallback };
             obj.Bind(LocalizationObject.KeyProperty, binding);
             return new CompiledBindingExtension()
             {
@@ -99,12 +103,16 @@ public sealed class LocalizeExtension
     {
         #region Key
 
-        public static readonly DirectProperty<LocalizationObject, string> KeyProperty = AvaloniaProperty.RegisterDirect<
-            LocalizationObject,
-            string
-        >(nameof(Key), o => o.Key, (o, v) => o.Key = v, unsetValue: string.Empty);
+        public static readonly DirectProperty<LocalizationObject, string> KeyProperty
+            = AvaloniaProperty.RegisterDirect<LocalizationObject, string>(
+                nameof(Key),
+                o => o.Key,
+                (o, v) => o.Key = v,
+                unsetValue: string.Empty
+            );
 
         private string _key = string.Empty;
+
         public string Key
         {
             get => _key;
@@ -114,18 +122,23 @@ public sealed class LocalizeExtension
                     RaisePropertyChanged(TextProperty, string.Empty, LocalizeService.Localize(Key));
             }
         }
+
         #endregion
+
         #region Text
 
-        public static readonly DirectProperty<LocalizationObject, string> TextProperty =
-            AvaloniaProperty.RegisterDirect<LocalizationObject, string>(
+        public static readonly DirectProperty<LocalizationObject, string> TextProperty
+            = AvaloniaProperty.RegisterDirect<LocalizationObject, string>(
                 nameof(Text),
                 o => o.Text,
                 unsetValue: string.Empty
             );
+
         public string Text => LocalizeService.Localize(Key);
 
         #endregion
+
+        public string? Fallback { get; set; }
 
         private ILocalizeService LocalizeService { get; }
 
@@ -139,7 +152,7 @@ public sealed class LocalizeExtension
         private void OnLocalizationChanged(ILocalizeService sender, LocalizationChangedEventArgs args)
         {
             if (args.Key == Key)
-                RaisePropertyChanged(TextProperty, string.Empty, sender.Localize(Key));
+                RaisePropertyChanged(TextProperty, string.Empty, sender.Localize(Key, Fallback));
         }
     }
 

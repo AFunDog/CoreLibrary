@@ -15,20 +15,21 @@ internal sealed class LocalizeService : DisposableObject, ILocalizeService
 
     private IDataProvider<IEnumerable<LocalizationData>>[] DataProviders { get; }
 
-    private CultureInfo _currentCulture = CultureInfo.CurrentCulture;
-
+    // 默认语言，当其他语言不存在或翻译不存在时尝试使用默认翻译
+    private CultureInfo DefaultCulture { get; } = CultureInfo.GetCultureInfo(string.Empty); 
+    
     public CultureInfo LocalizeCulture
     {
-        get => _currentCulture;
+        get;
         set
         {
-            if (Equals(_currentCulture, value))
+            if (Equals(field, value))
                 return;
 
             // 当服务切换翻译语言时，通知改变
 
             HashSet<string> notifyChangedKeySet = [];
-            if (LocalizationTable.TryGetValue(_currentCulture, out var dict))
+            if (LocalizationTable.TryGetValue(field, out var dict))
             {
                 foreach (var key in dict.Keys)
                 {
@@ -36,10 +37,10 @@ internal sealed class LocalizeService : DisposableObject, ILocalizeService
                 }
             }
 
-            _currentCulture = value;
-            LocalizeCultureChanged?.Invoke(this, _currentCulture);
+            field = value;
+            LocalizeCultureChanged?.Invoke(this, field);
 
-            if (LocalizationTable.TryGetValue(_currentCulture, out dict))
+            if (LocalizationTable.TryGetValue(field, out dict))
             {
                 foreach (var key in dict.Keys)
                 {
@@ -52,7 +53,7 @@ internal sealed class LocalizeService : DisposableObject, ILocalizeService
                 LocalizationChanged?.Invoke(this, new(key));
             }
         }
-    }
+    } = CultureInfo.CurrentCulture;
 
     public event Action<ILocalizeService, CultureInfo>? LocalizeCultureChanged;
     public event Action<ILocalizeService, LocalizationChangedEventArgs>? LocalizationChanged;
@@ -88,12 +89,12 @@ internal sealed class LocalizeService : DisposableObject, ILocalizeService
         LoadLocalization();
     }
 
-    public string Localize(string key)
+    public string Localize(string key,string? fallback = null)
     {
-        return Localize(key, LocalizeCulture);
+        return Localize(key, LocalizeCulture,fallback);
     }
 
-    public string Localize(string key, CultureInfo culture)
+    public string Localize(string key, CultureInfo culture,string? fallback = null)
     {
         if (LocalizationTable.TryGetValue(culture, out var loc))
         {
@@ -103,7 +104,7 @@ internal sealed class LocalizeService : DisposableObject, ILocalizeService
             }
         }
 
-        return key;
+        return LocalizationTable.GetValueOrDefault(DefaultCulture)?.GetValueOrDefault(key) ?? fallback ?? key;
     }
 
     private void LoadLocalization()
